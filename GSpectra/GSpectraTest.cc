@@ -1,5 +1,4 @@
-#include <iostream>
-#include <stdio.h>
+//#include <Python.h>
 
 #include "GSpectra.h"
 
@@ -10,9 +9,20 @@ int main(){
     		pSpecTemp->AddOneEvent(i);
     	}
     }
-    for(int i=0; i<20; i++){
-    	std::cout<<pSpecTemp->CountsInBin(i)<<std::endl;
-    }
+    
+  	pSpecTemp->Output("Spectrum_temp.txt");
+  	pSpecTemp->Clear();
+  	pSpecTemp->Output("Spectrum_temp_clear.txt");
     delete pSpecTemp;
+    
+    /*
+    Py_Initialize();
+    PyObject *obj = Py_BuildValue("s", "simple_plot.py");
+ 	FILE *file = _Py_fopen_obj(obj, "r+");
+  	if(file != NULL) {
+     	PyRun_SimpleFile(file, "simple_plot.py");
+ 	}
+  	Py_Finalize();
+    */
     return 0;
 }

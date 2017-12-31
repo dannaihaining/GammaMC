@@ -1,5 +1,4 @@
 #include "GSpectra.h"
-#include <cstring>
 
 void GSpectra::AddOneEvent(int num){
 	double fNum = (double)num;
@@ -23,7 +22,17 @@ void GSpectra::AddOneEvent(double num){
 	pSpec[nIndex] ++;
 }
 void GSpectra::Clear(){
-	memset(pSpec, 0, sizeof(pSpec));
+	memset(pSpec, 0, sizeof(pSpec[0])*nSpecSize);
+}
+void GSpectra::Output(std::string strFileName){
+	std::ofstream myfile;
+  	myfile.open(strFileName);	//Overwrite
+  	myfile <<nSpecSize<< "\n";	//Spectrum bin number
+  	myfile <<fBin<< "\n";		//Spectrum bin size
+    for(int i=0; i<20; i++){
+    	myfile <<pSpec[i]<< "\n";
+    }
+  	myfile.close();
 }
 int GSpectra::CountsInBin(int nBin){
 	if(nBin>=nSpecSize) return -1;
