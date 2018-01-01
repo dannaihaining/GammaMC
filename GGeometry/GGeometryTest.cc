@@ -1,4 +1,5 @@
 #include "GGeometryStruct.h"
+#include "GCuboid.h"
 #include <iostream>     // std::cout
 
 int main(){
@@ -44,5 +45,15 @@ int main(){
     std::cout<<"Origin: "<<gs_VectorTemp3.gs_Orig.x<<" "<<gs_VectorTemp3.gs_Orig.y<<" "<<gs_VectorTemp3.gs_Orig.z<<std::endl;
     std::cout<<"Direction: "<<gs_VectorTemp3.fDirX<<" "<<gs_VectorTemp3.fDirY<<" "<<gs_VectorTemp3.fDirZ<<std::endl;
     
+    double fZero = 0;
+    double inf1 = 1/fZero;
+    double inf2 = -1/fZero;
+    std::cout<<"Testing double INFINITY: "<<inf1<<" "<<inf2<<std::endl;
+    
+    GCuboid g_sCuboid(2,2,2,10,10,10);
+    GVector gs_VectorTemp5(0,0,0,1,1,1);
+    double t1=0, t2=0;
+    if(g_sCuboid.IfCollid(&gs_VectorTemp5, t1, t2))
+		std::cout<<"tEnter/tExit: "<<t1<<" "<<t2<<std::endl;
     return 0;
 }

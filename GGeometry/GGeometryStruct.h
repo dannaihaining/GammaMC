@@ -22,9 +22,15 @@ struct GVector{
 	double fDirX;
 	double fDirY;
 	double fDirZ;
+	double fDirFracX;
+	double fDirFracY;
+	double fDirFracZ;
 	GPoint gs_Orig;
 	GVector(){
 		fDirX=1; fDirY=0; fDirZ=0;
+		fDirFracX=1.0/fDirX;
+		fDirFracY=1.0/fDirY;
+		fDirFracZ=1.0/fDirZ;
 	}
 	GVector(double fInOrigX, double fInOrigY, double fInOrigZ, double fInDirX, double fInDirY, double fInDirZ){
 		gs_Orig.SetPos(fInOrigX, fInOrigY, fInOrigZ);
@@ -34,6 +40,9 @@ struct GVector{
 			fDirX=fInDirX/fNorm;
 			fDirY=fInDirY/fNorm;
 			fDirZ=fInDirZ/fNorm;
+			fDirFracX=1.0/fDirX;
+			fDirFracY=1.0/fDirY;
+			fDirFracZ=1.0/fDirZ;
 		}
 	}
 	GVector(GPoint gs_InPoint, double fInDirX, double fInDirY, double fInDirZ){
@@ -44,11 +53,17 @@ struct GVector{
 			fDirX=fInDirX/fNorm;
 			fDirY=fInDirY/fNorm;
 			fDirZ=fInDirZ/fNorm;
+			fDirFracX=1.0/fDirX;
+			fDirFracY=1.0/fDirY;
+			fDirFracZ=1.0/fDirZ;
 		}
 	}
 	GVector(double fInX, double fInY, double fInZ, bool fSetOrig){
 		if(fSetOrig){
 			fDirX=1; fDirY=0; fDirZ=0;
+			fDirFracX=1.0/fDirX;
+			fDirFracY=1.0/fDirY;
+			fDirFracZ=1.0/fDirZ;
 			gs_Orig.SetPos(fInX, fInY, fInZ);
 		}
 		else{
@@ -58,6 +73,9 @@ struct GVector{
 				fDirX=fInX/fNorm;
 				fDirY=fInY/fNorm;
 				fDirZ=fInZ/fNorm;
+				fDirFracX=1.0/fDirX;
+				fDirFracY=1.0/fDirY;
+				fDirFracZ=1.0/fDirZ;
 			}
 		}
 	}
@@ -67,6 +85,9 @@ struct GVector{
 			fDirX=fInX/fNorm;
 			fDirY=fInY/fNorm;
 			fDirZ=fInZ/fNorm;
+			fDirFracX=1.0/fDirX;
+			fDirFracY=1.0/fDirY;
+			fDirFracZ=1.0/fDirZ;
 		}
 	}
 	void SetOrig(double fInX, double fInY, double fInZ){
