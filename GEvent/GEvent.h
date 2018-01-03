@@ -13,6 +13,16 @@ class GEvent{
 };
 
 //Public inheritance is used to allow for casting (from derived class to base class)
+class GEmission:public GEvent{
+	public:
+  	GEmission (double t)
+    	: GEvent(t){}
+  	virtual void processEvent(){
+  		//std::cout<<"Emission"<<std::endl;
+  	}
+	private:
+};
+
 class GCompton:public GEvent{
 	public:
   	GCompton (double t)
