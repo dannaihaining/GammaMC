@@ -6,10 +6,14 @@
 
 class GCuboid{
 	private:
+	public:
 	//Diagonal points defining the cuboid
 	GPoint bl;
 	GPoint tr;
-	public:
+	//Jiawei-Jan03
+	//This is a dangerous bug. I lef them as public so that
+	//GVector* GCuboidSource::GenerateOneRay() could call them. Need to fix.
+	
 	GCuboid(){
 		bl.SetPos(0,0,0);
 		tr.SetPos(0,0,0);

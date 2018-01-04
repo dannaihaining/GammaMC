@@ -4,6 +4,10 @@
 #include "GGeometry/GPoint.h"
 #include "GGeometry/GVector.h"
 #include "GGeometry/GCuboid.h"
+#include "GSource/GSource.h"
+
+#include <iostream>
+#include <fstream>
 
 int main(){
 	GSimProcess* GammaSim = new GSimProcess();
@@ -14,15 +18,44 @@ int main(){
   	double t=0.0;
   	double tTemp;
   	int nTotalDecay = 0;
-  	while (t<1E6){//One second of simulation
+  	GPointSource* pPointSource = new GPointSource(0.0,0.0,0.0);
+  	GCuboidSource* pCubSource = new GCuboidSource(0.0,0.0,0.0,1.0,1.0,1.0);
+  	
+  	std::ofstream myfile;
+  	myfile.open ("example1.txt");
+  
+  	while (t<1E5){//0.001 second of simulation
     	//std::cout << "pumping queue with event at time: " << t << "us" << std::endl;
-    	GammaSim->scheduleEvent(new GEmission(t,0.0,0.0,0.0));
+    	//GammaSim->scheduleEvent(new GEmission(t,0.0,0.0,0.0));
     	if(!GRand::RandTime2Decay(fActivity, tTemp)) break;
     	nTotalDecay ++;
     	t+=tTemp;
+    	GVector* pVector = pPointSource->GenerateOneRay();
+  		myfile<<pVector->gs_Orig.x<<" "<<pVector->gs_Orig.y<<" "<<pVector->gs_Orig.z
+  			<<" "<<pVector->fDirX<<" "<<pVector->fDirY<<" "<<pVector->fDirZ<<"\n";
+    	delete pVector;
   	}
-  	// Run the simulation.
-  	GammaSim->run();
+  	myfile.close();
   	std::cout << "Total decays: " << nTotalDecay << std::endl;
+  	
+  	t = 0.0;
+  	myfile.open ("example2.txt");
+  	while (t<1E5){//0.001 second of simulation
+    	if(!GRand::RandTime2Decay(fActivity, tTemp)) break;
+    	nTotalDecay ++;
+    	t+=tTemp;
+    	GVector* pVector = pCubSource->GenerateOneRay();
+  		myfile<<pVector->gs_Orig.x<<" "<<pVector->gs_Orig.y<<" "<<pVector->gs_Orig.z
+  			<<" "<<pVector->fDirX<<" "<<pVector->fDirY<<" "<<pVector->fDirZ<<"\n";
+    	delete pVector;
+  	}
+  	myfile.close();
+  	std::cout << "Total decays: " << nTotalDecay << std::endl;
+  	
+  	
+  	// Run the simulation.
+  	// GammaSim->run();
+  	delete pPointSource;
+  	delete pCubSource;
 	return 0;
 }
