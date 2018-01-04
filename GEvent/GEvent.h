@@ -6,17 +6,20 @@
 class GEvent{
 	public:
   	// Construct sets time of event.
-  	GEvent(double t) : time(t){}
+  	GEvent(double t, double fX, double fY, double fZ):
+  		time(t), x(fX), y(fY), z(fZ){}
+  	
   	// Execute event by invoking this method.
   	virtual void processEvent() = 0;
   	const double time;
+  	const double x,y,z;
 };
 
 //Public inheritance is used to allow for casting (from derived class to base class)
 class GEmission:public GEvent{
 	public:
-  	GEmission (double t)
-    	: GEvent(t){}
+  	GEmission (double t, double fX, double fY, double fZ)
+    	: GEvent(t, fX, fY, fZ){}
   	virtual void processEvent(){
   		//std::cout<<"Emission"<<std::endl;
   	}
@@ -25,8 +28,8 @@ class GEmission:public GEvent{
 
 class GCompton:public GEvent{
 	public:
-  	GCompton (double t)
-    	: GEvent(t){}
+  	GCompton (double t, double fX, double fY, double fZ)
+    	: GEvent(t, fX, fY, fZ){}
   	virtual void processEvent(){
   		std::cout<<"Compton"<<std::endl;
   	}
@@ -35,8 +38,8 @@ class GCompton:public GEvent{
 
 class GPhotoElec:public GEvent{
 	public:
-  	GPhotoElec (double t)
-    	: GEvent(t){}
+  	GPhotoElec (double t, double fX, double fY, double fZ)
+    	: GEvent(t, fX, fY, fZ){}
   	virtual void processEvent(){
   		std::cout<<"PhotoElec"<<std::endl;
   	}
@@ -45,8 +48,8 @@ class GPhotoElec:public GEvent{
 
 class GPairProd:public GEvent{
 	public:
-  	GPairProd (double t)
-    	:GEvent(t){}
+  	GPairProd (double t, double fX, double fY, double fZ)
+    	:GEvent(t, fX, fY, fZ){}
   	virtual void processEvent(){
   		std::cout<<"PairProd"<<std::endl;
   	}

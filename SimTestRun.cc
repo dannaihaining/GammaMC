@@ -1,6 +1,9 @@
 #include "GSimProcess/GSimProcess.h"
 #include "GRand/GRand.h"
 #include "GEvent/GEvent.h"
+#include "GGeometry/GPoint.h"
+#include "GGeometry/GVector.h"
+#include "GGeometry/GCuboid.h"
 
 int main(){
 	GSimProcess* GammaSim = new GSimProcess();
@@ -13,7 +16,7 @@ int main(){
   	int nTotalDecay = 0;
   	while (t<1E6){//One second of simulation
     	//std::cout << "pumping queue with event at time: " << t << "us" << std::endl;
-    	GammaSim->scheduleEvent(new GEmission(t));
+    	GammaSim->scheduleEvent(new GEmission(t,0.0,0.0,0.0));
     	if(!GRand::RandTime2Decay(fActivity, tTemp)) break;
     	nTotalDecay ++;
     	t+=tTemp;

@@ -1,4 +1,5 @@
-#include "GGeometryStruct.h"
+#include "GPoint.h"
+#include "GVector.h"
 #include "GCuboid.h"
 #include <iostream>     // std::cout
 

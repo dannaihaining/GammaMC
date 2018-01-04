@@ -1,6 +1,7 @@
 #ifndef CUBOID_H
 #define CUBOID_H
-#include "GGeometryStruct.h"
+#include "GPoint.h"
+#include "GVector.h"
 #include <algorithm>
 
 class GCuboid{
