@@ -78,6 +78,11 @@ struct GVector{
 	void SetOrig(double fInX, double fInY, double fInZ){
 		gs_Orig.SetPos(fInX, fInY, fInZ);
 	}
+	void PointOnThis(double t, double& x, double& y, double& z){
+		x = t*fDirX + gs_Orig.x;
+		y = t*fDirY + gs_Orig.y;
+		z = t*fDirZ + gs_Orig.z;
+	}
 };
 
 

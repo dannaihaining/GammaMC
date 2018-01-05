@@ -6,6 +6,7 @@
 #include <cmath>		/* sin */
 #include "../GGeometry/GPoint.h"
 
+
 /*
  * Gamma-related random number generators
  */
@@ -28,7 +29,7 @@ class GRand{
   	static bool RandTime2Decay(double A, double& t){
   		if(A<=0) return false;
   		A *= 3.7E-2; //Convert to average deays per us
-  		t = -log(1-RandDouble(0,1))/A;
+  		t = -log(1-RandDouble(0,1.0))/A;
   		return true;
   	}
   	//Uniformly sample the direction on a unit sphere
@@ -45,6 +46,14 @@ class GRand{
   		fPosX = RandDouble(bl->x, tr->x);
   		fPosY = RandDouble(bl->y, tr->y);
   		fPosZ = RandDouble(bl->z, tr->z);
+  		return true;
+  	}
+  	static bool RandInteractionDepth(double fAttnCoeff, double& z, double fMaxZ=1E7){
+  		//fAttnCoeff: unit 1/cm
+  		//z: unit cm
+		if(fAttnCoeff<=0) return false;
+		z = -log(1-RandDouble(0,1.0))/fAttnCoeff;
+		if(z>fMaxZ) return false;
   		return true;
   	}
 };

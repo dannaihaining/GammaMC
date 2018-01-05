@@ -54,7 +54,7 @@ int main(){
     GCuboid g_sCuboid(2,2,2,10,10,10);
     GVector gs_VectorTemp5(0,0,0,1,1,1);
     double t1=0, t2=0;
-    if(g_sCuboid.IfCollid(&gs_VectorTemp5, t1, t2))
+    if(g_sCuboid.IfCollide(&gs_VectorTemp5, t1, t2))
 		std::cout<<"tEnter/tExit: "<<t1<<" "<<t2<<std::endl;
     return 0;
 }

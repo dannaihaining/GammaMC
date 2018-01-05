@@ -27,7 +27,7 @@ class GCuboid{
 		tr.SetPos(gs_InTr.x, gs_InTr.y, gs_InTr.z);
 	}
 	//If a vector "collides" with cuboid. Return the timing of enter and exit.
-	bool IfCollid(GVector* g_sVec, double& t1, double &t2);
+	bool IfCollide(GVector* g_sVec, double& t1, double &t2);
 };
 
 #endif
