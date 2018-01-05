@@ -34,7 +34,7 @@ class GRand{
   	//Uniformly sample the direction on a unit sphere
   	static bool RandSphereDir(double &x, double &y, double &z){
   		double theta = 2*M_PI*RandDouble(0.0, 1.0);
-  		double phi = M_PI*RandDouble(0.0, 1.0);
+  		double phi = acos(1-2*RandDouble(0.0, 1.0));
   		x = sin(phi) * cos(theta);
   		y = sin(phi) * sin(theta);
   		z = cos(phi);

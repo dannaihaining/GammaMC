@@ -39,17 +39,17 @@ int main(){
   	std::cout << "Total decays: " << nTotalDecay << std::endl;
   	
   	t = 0.0;
-  	myfile.open ("example2.txt");
+  	//myfile.open ("example2.txt");
   	while (t<1E5){//0.001 second of simulation
     	if(!GRand::RandTime2Decay(fActivity, tTemp)) break;
     	nTotalDecay ++;
     	t+=tTemp;
     	GVector* pVector = pCubSource->GenerateOneRay();
-  		myfile<<pVector->gs_Orig.x<<" "<<pVector->gs_Orig.y<<" "<<pVector->gs_Orig.z
-  			<<" "<<pVector->fDirX<<" "<<pVector->fDirY<<" "<<pVector->fDirZ<<"\n";
+  		//myfile<<pVector->gs_Orig.x<<" "<<pVector->gs_Orig.y<<" "<<pVector->gs_Orig.z
+  		//	<<" "<<pVector->fDirX<<" "<<pVector->fDirY<<" "<<pVector->fDirZ<<"\n";
     	delete pVector;
   	}
-  	myfile.close();
+  	//myfile.close();
   	std::cout << "Total decays: " << nTotalDecay << std::endl;
   	
   	
