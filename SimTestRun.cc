@@ -24,13 +24,16 @@ int main(){
   	int nInteractions = 0;
   	int nTrespass = 0;
   	GPointSource* pPointSource = new GPointSource(0.0,0.0,0.0);
-  	GCuboid* pTempObj = new GCuboid(-1,-1,20, 1,1,21.5);
-  	
+  	GCuboid* pTempObj1 = new GCuboid(-1,-1,3, 1,1,5);
+  	GCuboid* pTempObj2 = new GCuboid(-1,-1,-1, 1,1,1);
   	
   	std::ofstream myfile;
   	myfile.open ("example1.txt");
   
-  	while (t<1E7){//0.001 second of simulation
+  	std::ofstream myfile3;
+  	myfile3.open ("example3.txt");
+  	
+  	while (t<1E5){//0.001 second of simulation
     	//std::cout << "pumping queue with event at time: " << t << "us" << std::endl;
     	//GammaSim->scheduleEvent(new GEmission(t,0.0,0.0,0.0));
     	if(!GRand::RandTime2Decay(fActivity, tTemp)) break;
@@ -40,26 +43,36 @@ int main(){
 //    	myfile<<pVector->gs_Orig.x<<" "<<pVector->gs_Orig.y<<" "<<pVector->gs_Orig.z
 // 				<<" "<<pVector->fDirX<<" "<<pVector->fDirY<<" "<<pVector->fDirZ<<"\n";
 		double fT1, fT2, fX, fY, fZ;
-  		if(pTempObj->IfCollide(pVector, fT1, fT2)){
-  			/*
+  		if(pTempObj1->IfCollide(pVector, fT1, fT2)){
+  			
   			pVector->PointOnThis(fT1, fX, fY, fZ);
   			myfile<<fX<<" "<<fY<<" "<<fZ<<" "<<fT1<<" ";
   			pVector->PointOnThis(fT2, fX, fY, fZ);
   			myfile<<fX<<" "<<fY<<" "<<fZ<<" "<<fT2<<"\n";
-  			*/
+  			
+  			
   			nTrespass++;
   			
+  			/*
   			double fZTemp;
   			if(GRand::RandInteractionDepth(LIN_ATTEN_COEFF,fZTemp,1*(fT2-fT1))){
   				myfile<<fZTemp<<"\n";
   				nInteractions++;
   			}
-  			
+  			*/
+  		}
+  		
+  		if(pTempObj2->IfCollide(pVector, fT1, fT2)){
+  			pVector->PointOnThis(fT1, fX, fY, fZ);
+  			myfile3<<fX<<" "<<fY<<" "<<fZ<<" "<<fT1<<" ";
+  			pVector->PointOnThis(fT2, fX, fY, fZ);
+  			myfile3<<fX<<" "<<fY<<" "<<fZ<<" "<<fT2<<"\n";			
   		}
   			
     	delete pVector;
   	}
   	myfile.close();
+  	myfile3.close();
   	std::cout << "Total decays: " << nTotalDecay << std::endl;
   	std::cout << "Total trespass: " << nTrespass << std::endl;
   	std::cout << "Total interactions: " << nInteractions << std::endl;
