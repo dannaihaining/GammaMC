@@ -56,5 +56,22 @@ int main(){
     double t1=0, t2=0;
     if(g_sCuboid.IfCollide(&gs_VectorTemp5, t1, t2))
 		std::cout<<"tEnter/tExit: "<<t1<<" "<<t2<<std::endl;
+		
+	GCuboid g_sCuboid2(-2,-2,-2,10,10,10);
+    if(g_sCuboid2.IfCollide(&gs_VectorTemp5, t1, t2)){
+		std::cout<<"tEnter/tExit: "<<t1<<" "<<t2<<std::endl;
+	}
+	else{
+		std::cout<<"g_sCuboid2 not colliding"<<t1<<" "<<t2<<std::endl;
+	}	
+	
+	gs_VectorTemp5.SetDir(-1,-1,-1);
+	if(g_sCuboid.IfCollide(&gs_VectorTemp5, t1, t2)){
+		std::cout<<"tEnter/tExit: "<<t1<<" "<<t2<<std::endl;
+	}
+	else{
+		std::cout<<"g_sCuboid not colliding"<<t1<<" "<<t2<<std::endl;
+	}	
+	
     return 0;
 }

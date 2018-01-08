@@ -16,15 +16,21 @@ bool GCuboid::IfCollide(GVector* g_sVec, double& tEnter, double &tExit){
 	tEnter = std::max(std::max(std::min(t1, t2), std::min(t3, t4)), std::min(t5, t6));
 	tExit = std::min(std::min(std::max(t1, t2), std::max(t3, t4)), std::max(t5, t6));
 	
-	// if tEnter < 0, ray (line) is intersecting AABB, but the whole AABB is behind us
-	if (tEnter < 0){
-    	return false;
-    }
-
 	// if tEnter > tExit, ray doesn't intersect AABB
 	if (tEnter >= tExit){
 		return false;
 	}
 	
+	// Vector is in the opposite direction
+	if (tExit <= 0.0){
+		return false;
+	}
+	
+	// if tEnter < 0, ray (line) is intersecting AABB, but the vector starts from within the cuboid.
+	if (tEnter < 0){
+		tEnter = 0.0;
+    	return true;
+    }
+    
 	return true;
 }
