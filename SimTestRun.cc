@@ -13,6 +13,17 @@
 #define LIN_ATTEN_COEFF 0.41818
 
 int main(){
+	
+	/*
+	std::cout << "Klein Nishina test:" << std::endl;
+	std::cout << GRand::RelDiffCrossSecCompton(0.1, -1) << std::endl;
+	std::cout << GRand::RelDiffCrossSecCompton(0.1, 1) << std::endl;
+	std::cout << GRand::RelDiffCrossSecCompton(0.5, -1) << std::endl;
+	std::cout << GRand::RelDiffCrossSecCompton(0.5, 1) << std::endl;
+	std::cout << GRand::RelDiffCrossSecCompton(1, -1) << std::endl;
+	std::cout << GRand::RelDiffCrossSecCompton(1, 1) << std::endl;
+	*/
+	
 	GSimProcess* GammaSim = new GSimProcess();
 	srand(time(0));  // Initialize random number generator.
 	std::cout << "Gamma sim start" << std::endl;
@@ -33,6 +44,10 @@ int main(){
   	std::ofstream myfile3;
   	myfile3.open ("example3.txt");
   	
+  	
+  	std::ofstream myfile4;
+  	myfile4.open ("exampleComptonSampler.txt");
+  	
   	while (t<1E5){//0.001 second of simulation
     	//std::cout << "pumping queue with event at time: " << t << "us" << std::endl;
     	//GammaSim->scheduleEvent(new GEmission(t,0.0,0.0,0.0));
@@ -42,7 +57,7 @@ int main(){
     	GVector* pVector = pPointSource->GenerateOneRay();
 //    	myfile<<pVector->gs_Orig.x<<" "<<pVector->gs_Orig.y<<" "<<pVector->gs_Orig.z
 // 				<<" "<<pVector->fDirX<<" "<<pVector->fDirY<<" "<<pVector->fDirZ<<"\n";
-		double fT1, fT2, fX, fY, fZ;
+		double fT1, fT2, fX, fY, fZ, fEs, fTheta, fPhi;
   		if(pTempObj1->IfCollide(pVector, fT1, fT2)){
   			
   			pVector->PointOnThis(fT1, fX, fY, fZ);
@@ -68,11 +83,15 @@ int main(){
   			pVector->PointOnThis(fT2, fX, fY, fZ);
   			myfile3<<fX<<" "<<fY<<" "<<fZ<<" "<<fT2<<"\n";			
   		}
-  			
+  		
+  		GRand::RandComptonAngle(0.1, fX, fY, fZ, fEs, fTheta, fPhi, 0);
+  		myfile4<<fTheta<<" "<<fPhi<<" "<<fEs<<"\n";	
+  		
     	delete pVector;
   	}
   	myfile.close();
   	myfile3.close();
+  	myfile4.close();
   	std::cout << "Total decays: " << nTotalDecay << std::endl;
   	std::cout << "Total trespass: " << nTrespass << std::endl;
   	std::cout << "Total interactions: " << nInteractions << std::endl;
