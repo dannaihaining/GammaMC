@@ -13,6 +13,9 @@
 
 //I should think about better ways of rand number generation
 //Should use line: srand(time(0));  // Initialize random number generator.
+
+
+
 class GRand{
 	public:
   	GRand(){}
@@ -54,6 +57,20 @@ class GRand{
 		if(fAttnCoeff<=0) return false;
 		z = -log(1-RandDouble(0,1.0))/fAttnCoeff;
 		if(z>fMaxZ) return false;
+  		return true;
+  	}
+  	static bool RandCircDir(double& fPhi){
+  		fPhi = M_PI*RandDouble(-1.0, 1.0);
+  		return true;
+  	}
+  	static bool RandComptonAngle(double fE, double& fTheta, double& fPhi, double &fEs, int nFlag){
+  		//Compton angle scatter sampler.
+  		//fE: incoming ray energy (MeV)
+  		//fEs: secondary gamma ray energy (MeV)
+  		//fTheta: polar angle (radian) 0~pi
+  		//fPhi: azimuthal angle (radian) -pi~pi
+  		//Flag 0: simple rectangular rejection
+  		//Flag 1: envelope rejection by Ozmutlu, "Sampling of Angular Distribution in Compton Scattering", 1992
   		return true;
   	}
 };
