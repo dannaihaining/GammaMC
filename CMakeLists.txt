@@ -16,12 +16,12 @@ add_subdirectory(GGeometry)
 # add_subdirectory(GRand)
 # add_subdirectory(GSimProcess)
 add_subdirectory(GSource)
-# add_subdirectory(GSpectra)
+add_subdirectory(GSpectra)
 
 # 指定生成目标
 add_executable(GSimTestRun SimTestRun.cc)
 
 # 添加链接库
 # target_link_libraries(GSimTestRun GSimProcess GRand GEvent GGometry GSource)
-target_link_libraries(GSimTestRun GGometry GSource)
+target_link_libraries(GSimTestRun GGometry GSource GSpectra)
 

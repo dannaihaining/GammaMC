@@ -29,7 +29,7 @@ void GSpectra::Output(std::string strFileName){
   	myfile.open(strFileName);	//Overwrite
   	myfile <<nSpecSize<< "\n";	//Spectrum bin number
   	myfile <<fBin<< "\n";		//Spectrum bin size
-    for(int i=0; i<20; i++){
+    for(int i=0; i<nSpecSize; i++){
     	myfile <<pSpec[i]<< "\n";
     }
   	myfile.close();

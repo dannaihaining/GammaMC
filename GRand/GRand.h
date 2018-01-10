@@ -87,7 +87,12 @@ class GRand{
   			}
   			//Flag 1: envelope rejection by Ozmutlu, "Sampling of Angular Distribution in Compton Scattering", 1992
   			case 1: {
-  				
+  				double fNormE = fE/E_EC;
+  				double c = 2*(2*fNormE*fNormE+2*fNormE+1)/(2*fNormE+1)/(2*fNormE+1)/(2*fNormE+1);
+  				double b = (1+c/2)/(1-c/2);
+  				double a = 2*(b-1);
+  				//The envelope function is h = a/(b-x).
+  				//Integration from -1 to 1: Integral(h) = -a*log(b-x).
   			}
   			default: return false;
   		}
