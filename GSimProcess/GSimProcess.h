@@ -3,6 +3,7 @@
 
 #include <queue>
 #include "../GEvent/GEvent.h"
+#include "../GSpectra/GSpectra.h"
 
 struct GEventComparator{
 	bool operator() (const GEvent * left, const GEvent * right) const{
@@ -16,18 +17,27 @@ class GSimProcess{
   		std::vector<GEvent *, std::allocator<GEvent*> >,
         GEventComparator> eventQueue;
 	public:
-  	GSimProcess():time(0.0),eventQueue(){}
+	GSpectra* pSpectrum;
+  	GSimProcess():time(0.0),eventQueue(){
+  		pSpectrum = new GSpectra(1000, 1);
+  	}
+  	~GSimProcess(){
+  		delete pSpectrum;
+  	}
   	void run(){
   		while (!eventQueue.empty()){
     		GEvent * nextEvent = eventQueue.top();
     		eventQueue.pop();
     		time = nextEvent->time;
-    		nextEvent->processEvent();
+    		nextEvent->processEvent(pSpectrum);
     		delete nextEvent;
   		}
 	}
-  	void scheduleEvent (GEvent * newEvent) {
+  	void ScheduleEvent (GEvent * newEvent) {
     	eventQueue.push (newEvent);
+  	}
+  	void OutputSpectrum(){
+  		pSpectrum->Output("SimEnergySpec.txt");
   	}
   	double time;
 };

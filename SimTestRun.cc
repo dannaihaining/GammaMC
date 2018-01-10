@@ -46,16 +46,6 @@ void GetAtten_All(double fE, double& fCS_C, double& fCS_P, double& fCS_E){
 
 int main(){
 	
-	/*
-	std::cout << "Klein Nishina test:" << std::endl;
-	std::cout << GRand::RelDiffCrossSecCompton(0.1, -1) << std::endl;
-	std::cout << GRand::RelDiffCrossSecCompton(0.1, 1) << std::endl;
-	std::cout << GRand::RelDiffCrossSecCompton(0.5, -1) << std::endl;
-	std::cout << GRand::RelDiffCrossSecCompton(0.5, 1) << std::endl;
-	std::cout << GRand::RelDiffCrossSecCompton(1, -1) << std::endl;
-	std::cout << GRand::RelDiffCrossSecCompton(1, 1) << std::endl;
-	*/
-	
 	//Note the spectrum class ONLY supports keV unit, with integer as bin size!
 	GSpectra* pSpectrum = new GSpectra(1000, 1);
 	GSimProcess* GammaSim = new GSimProcess();
@@ -72,44 +62,25 @@ int main(){
   	GPointSource* pPointSource = new GPointSource(0.0,0.0,0.0);
   	GCuboid* pTempObj1 = new GCuboid(-1,-1,1, 1,1,2.5);
   	
-  	/*
-  	std::ofstream myfile;
-  	myfile.open ("example1.txt");
-  	std::ofstream myfile3;
-  	myfile3.open ("example3.txt");
-  	std::ofstream myfile4;
-  	myfile4.open ("exampleComptonSampler.txt");
-  	*/
-  	
   	
   	//Attenuation coefficients
   	double fCS_C, fCS_P, fCS_E;
-  	
+  	std::cout << "Starting to pump queue with events"<< std::endl;
   	while (t<1E7){//0.001 second of simulation
-    	//std::cout << "pumping queue with event at time: " << t << "us" << std::endl;
-    	//GammaSim->scheduleEvent(new GEmission(t,0.0,0.0,0.0));
     	if(!GRand::RandTime2Decay(fActivity, tTemp)) break;
     	nTotalDecay ++;
     	t+=tTemp;
     	GVector* pVector = pPointSource->GenerateOneRay();
     	GetAtten_All(f_SourceE, fCS_C, fCS_P, fCS_E);
-//    	myfile<<pVector->gs_Orig.x<<" "<<pVector->gs_Orig.y<<" "<<pVector->gs_Orig.z
-// 				<<" "<<pVector->fDirX<<" "<<pVector->fDirY<<" "<<pVector->fDirZ<<"\n";
+    	
 		double fT1, fT2, fX, fY, fZ, fEs, fTheta, fPhi;
   		if(pTempObj1->IfCollide(pVector, fT1, fT2)){
-  			/*
-  			pVector->PointOnThis(fT1, fX, fY, fZ);
-  			myfile<<fX<<" "<<fY<<" "<<fZ<<" "<<fT1<<" ";
-  			pVector->PointOnThis(fT2, fX, fY, fZ);
-  			myfile<<fX<<" "<<fY<<" "<<fZ<<" "<<fT2<<"\n";
-  			*/
-  			
   			nTrespass++;
-  			
   			
   			double fZTemp;
   			if(GRand::RandInteractionDepth(fCS_C+fCS_P+fCS_E,fZTemp,1*(fT2-fT1))){
   				nInteractions++;
+  				GammaSim->ScheduleEvent(new GEmission(t,0.0,0.0,0.0, f_SourceE));
   				double fTemp = GRand::RandDouble(0.0, fCS_C+fCS_P+fCS_E);
   				if(fTemp <= fCS_C){//For now only one scatter at most.
   					GRand::RandComptonAngle(f_SourceE, fX, fY, fZ, fEs, fTheta, fPhi, 0);
@@ -120,52 +91,23 @@ int main(){
   					pSpectrum->AddOneEvent(1000*f_SourceE);
   				}
   			}
-  			
   		}
-  		
-  		
-  		//GRand::RandComptonAngle(0.1, fX, fY, fZ, fEs, fTheta, fPhi, 0);
-  		//myfile4<<fTheta<<" "<<fPhi<<" "<<fEs<<"\n";	
   		
     	delete pVector;
   	}
   	pSpectrum->Output("Spectrum_temp.txt");
-  	/*
-  	myfile.close();
-  	myfile3.close();
-  	myfile4.close();
-  	*/
+  	// Run the simulation.
+  	GammaSim->run();
+  	GammaSim->OutputSpectrum();
   	
   	std::cout << "Total decays: " << nTotalDecay << std::endl;
   	std::cout << "Total trespass: " << nTrespass << std::endl;
   	std::cout << "Total interactions: " << nInteractions << std::endl;
   	
   	
-  	
-  	
-  	// Run the simulation.
-  	// GammaSim->run();
   	delete pPointSource;
   	delete pSpectrum;
   	delete GammaSim;
-  	//Cube source
-  	/*
-  	GCuboidSource* pCubSource = new GCuboidSource(0.0,0.0,0.0,1.0,1.0,1.0);
-  	t = 0.0;
-  	//myfile.open ("example2.txt");
-  	while (t<1E5){//0.001 second of simulation
-    	if(!GRand::RandTime2Decay(fActivity, tTemp)) break;
-    	nTotalDecay ++;
-    	t+=tTemp;
-    	GVector* pVector = pCubSource->GenerateOneRay();
-  		//myfile<<pVector->gs_Orig.x<<" "<<pVector->gs_Orig.y<<" "<<pVector->gs_Orig.z
-  		//	<<" "<<pVector->fDirX<<" "<<pVector->fDirY<<" "<<pVector->fDirZ<<"\n";
-    	delete pVector;
-  	}
-  	//myfile.close();
-  	std::cout << "Total decays: " << nTotalDecay << std::endl;
-  	delete pCubSource;
-  	*/
   	
 	return 0;
 }
