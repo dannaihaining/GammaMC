@@ -1,5 +1,7 @@
 #include "GSimProcess.h"
 
+
+
 void GSimProcess::run(){
 	while (!eventQueue.empty()){
   		GEvent * nextEvent = eventQueue.top();
