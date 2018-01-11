@@ -3,7 +3,8 @@
 
 #include <iostream>
 #include "../GRand/GRand.h"
-#include "../GSpectra/GSpectra.h"
+
+class GSimProcess; //Forward declaration. Some people do not like it!
 
 class GEvent{
 	public:
@@ -12,7 +13,7 @@ class GEvent{
   		time(t), x(fX), y(fY), z(fZ), E(fE){}
   	
   	// Execute event by invoking this method.
-  	virtual void processEvent(GSpectra* pSpectrum) = 0;
+  	virtual void ProcessEvent(GSimProcess* pGProc) = 0;
   	const double time, E;
   	const double x,y,z;
 };
@@ -22,9 +23,7 @@ class GEmission:public GEvent{
 	public:
   	GEmission (double t, double fX, double fY, double fZ, double fE)
     	: GEvent(t, fX, fY, fZ, fE){}
-  	virtual void processEvent(GSpectra* pSpectrum){
-  		//std::cout<<"Emission"<<std::endl;
-  	}
+  	virtual void ProcessEvent(GSimProcess* pGProc);
 	private:
 };
 
@@ -32,11 +31,7 @@ class GCompton:public GEvent{
 	public:
   	GCompton (double t, double fX, double fY, double fZ, double fE)
     	: GEvent(t, fX, fY, fZ, fE){}
-  	virtual void processEvent(GSpectra* pSpectrum){
-  		double fX1, fY1, fZ1, fEs, fTheta, fPhi;
-  		GRand::RandComptonAngle(E, fX1, fY1, fZ1, fEs, fTheta, fPhi, 0);
-  		pSpectrum->AddOneEvent(1000*(E-fEs));
-  	}
+  	virtual void ProcessEvent(GSimProcess* pGProc);
 	private:
 };
 
@@ -44,9 +39,7 @@ class GPhotoElec:public GEvent{
 	public:
   	GPhotoElec (double t, double fX, double fY, double fZ, double fE)
     	: GEvent(t, fX, fY, fZ, fE){}
-  	virtual void processEvent(GSpectra* pSpectrum){
-  		pSpectrum->AddOneEvent(1000*E);
-  	}
+  	virtual void ProcessEvent(GSimProcess* pGProc);
 	private:
 };
 
@@ -54,9 +47,7 @@ class GPairProd:public GEvent{
 	public:
   	GPairProd (double t, double fX, double fY, double fZ, double fE)
     	:GEvent(t, fX, fY, fZ, fE){}
-  	virtual void processEvent(GSpectra* pSpectrum){
-  		//To be added
-  	}
+  	virtual void ProcessEvent(GSimProcess* pGProc);
 	private:
 };
 

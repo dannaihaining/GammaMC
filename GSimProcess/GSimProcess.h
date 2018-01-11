@@ -24,21 +24,10 @@ class GSimProcess{
   	~GSimProcess(){
   		delete pSpectrum;
   	}
-  	void run(){
-  		while (!eventQueue.empty()){
-    		GEvent * nextEvent = eventQueue.top();
-    		eventQueue.pop();
-    		time = nextEvent->time;
-    		nextEvent->processEvent(pSpectrum);
-    		delete nextEvent;
-  		}
-	}
-  	void ScheduleEvent (GEvent * newEvent) {
-    	eventQueue.push (newEvent);
-  	}
-  	void OutputSpectrum(){
-  		pSpectrum->Output("SimEnergySpec.txt");
-  	}
+  	void run();
+  	void ScheduleEvent (GEvent * newEvent);
+  	void OutputSpectrum();
+  	private:
   	double time;
 };
 

@@ -11,10 +11,10 @@ project (GSimTestRun)
 aux_source_directory(. DIR_SRCS)
 
 # 添加子目录
-# add_subdirectory(GEvent)
+add_subdirectory(GEvent)
 add_subdirectory(GGeometry)
 # add_subdirectory(GRand)
-# add_subdirectory(GSimProcess)
+add_subdirectory(GSimProcess)
 add_subdirectory(GSource)
 add_subdirectory(GSpectra)
 
@@ -23,5 +23,5 @@ add_executable(GSimTestRun SimTestRun.cc)
 
 # 添加链接库
 # target_link_libraries(GSimTestRun GSimProcess GRand GEvent GGometry GSource)
-target_link_libraries(GSimTestRun GGometry GSource GSpectra)
+target_link_libraries(GSimTestRun GGometry GSource GSpectra GSimProcess GEvent)
 
