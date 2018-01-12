@@ -21,7 +21,9 @@ add_subdirectory(GSpectra)
 # 指定生成目标
 add_executable(GSimTestRun SimTestRun.cc)
 
-# 添加链接库
+# Add links
+# Note many link files were moved down to GSimProcess folder.
 # target_link_libraries(GSimTestRun GSimProcess GRand GEvent GGometry GSource)
-target_link_libraries(GSimTestRun GGometry GSource GSpectra GSimProcess GEvent)
+# target_link_libraries(GSimTestRun GGometry GSource GSpectra GSimProcess GEvent)
+target_link_libraries(GSimTestRun GEvent GSimProcess)
 

@@ -1,5 +1,5 @@
 #include "GSimProcess.h"
-
+#include <iostream>
 
 
 void GSimProcess::run(){

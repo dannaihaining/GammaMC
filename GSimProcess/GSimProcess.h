@@ -7,6 +7,7 @@
 #include "../GGeometry/GCuboid.h"
 #include "../GGeometry/GVector.h"
 #include "../GSource/GSource.h"
+#include "../GRand/GRand.h"
 
 struct GEventComparator{
 	bool operator() (const GEvent * left, const GEvent * right) const{

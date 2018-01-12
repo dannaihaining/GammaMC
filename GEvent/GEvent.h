@@ -2,7 +2,6 @@
 #define EVENT_H
 
 #include <iostream>
-#include "../GRand/GRand.h"
 
 class GSimProcess; //Forward declaration. Some people do not like it!
 

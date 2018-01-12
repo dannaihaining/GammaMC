@@ -9,3 +9,5 @@ aux_source_directory(. DIR_LIB_SIM)
 # 生成链接库
 add_library (GSimProcess ${DIR_LIB_SIM})
 
+
+target_link_libraries(GSimProcess GGometry GSource GSpectra GEvent)
