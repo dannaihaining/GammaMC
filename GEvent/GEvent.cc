@@ -41,7 +41,7 @@ void GEmission::ProcessEvent(GSimProcess* pGProc){
 	GVector* pVector = pGProc->pPointSource->GenerateOneRay();
 	GetAtten_All(E, fCS_C, fCS_P, fCS_E);
 	double fT1, fT2, fX, fY, fZ, fEs, fTheta, fPhi;
-	if(pGProc->pTempObj1->IfCollide(pVector, fT1, fT2)){
+	if(pGProc->vecGCuboid[0]->IfCollide(pVector, fT1, fT2)){
 		double fZTemp;
   		if(GRand::RandInteractionDepth(fCS_C+fCS_P+fCS_E,fZTemp,1*(fT2-fT1))){
   			double fTemp = GRand::RandDouble(0.0, fCS_C+fCS_P+fCS_E);

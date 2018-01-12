@@ -24,12 +24,15 @@ class GSimProcess{
 	GSpectra* pSpectrum;
 	GCuboid* pTempObj1;
   	GPointSource* pPointSource;
+  	std::vector<GCuboid*> vecGCuboid;
   	GSimProcess():time(0.0),eventQueue(){
   		pSpectrum = new GSpectra(1000, 1);
   		pTempObj1 = new GCuboid(-1,-1,1, 1,1,2.5);
+  		vecGCuboid.push_back(pTempObj1);
   		pPointSource = new GPointSource(0.0,0.0,0.0);
   	}
   	~GSimProcess(){
+  		if(vecGCuboid.size()>0) vecGCuboid.erase(vecGCuboid.begin(), vecGCuboid.end());
   		delete pSpectrum;
   		delete pTempObj1;
   		delete pPointSource;

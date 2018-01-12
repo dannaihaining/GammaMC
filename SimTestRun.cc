@@ -107,10 +107,6 @@ int main(){
   	
   	std::cout << "Total decays: " << nTotalDecay << std::endl;
   	
-  	std::cout << "Total trespass: " << nTrespass << std::endl;
-  	std::cout << "Total interactions: " << nInteractions << std::endl;
-  	
-  	
   	delete pPointSource;
   	//delete pSpectrum;
   	delete GammaSim;
