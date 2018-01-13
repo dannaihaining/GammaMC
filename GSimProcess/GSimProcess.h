@@ -2,6 +2,8 @@
 #define SIM_PROCESS_H
 
 #include <queue>
+#include <limits>
+#include <utility>      // std::pair, std::make_pair
 #include "../GEvent/GEvent.h"
 #include "../GSpectra/GSpectra.h"
 #include "../GGeometry/GCuboid.h"

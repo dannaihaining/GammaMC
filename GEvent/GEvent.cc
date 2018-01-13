@@ -4,7 +4,8 @@
 
 //For now I just used the linear attenuation coefficient of CZT at 662 keV. (1/cm)
 #define DENSITY 5.8
-#define E_THR 10
+//Energy threshold for the simulation: 10 keV
+#define E_THR 0.1
 
 int nENum = 7;
 double fEnergy[7] = {0.01, 0.05, 0.1, 0.2, 0.4, 0.5, 0.662};
@@ -41,20 +42,19 @@ void GEmission::ProcessEvent(GSimProcess* pGProc){
 	GVector* pVector = pGProc->pPointSource->GenerateOneRay();
 	GetAtten_All(E, fCS_C, fCS_P, fCS_E);
 	pGProc->ReOrderObjects(pVector);
-	double fT1, fT2, fX, fY, fZ, fEs, fTheta, fPhi;
+	double fT1, fT2, fX, fY, fZ;
 	for(int i=0; i<pGProc->vecGCuboid.size(); i++){
 		if(pGProc->vecGCuboid[i]->IfCollide(pVector, fT1, fT2)){
 			double fZTemp;
-  			if(GRand::RandInteractionDepth(fCS_C+fCS_P+fCS_E,fZTemp,1*(fT2-fT1))){
+  			if(GRand::RandInteractionDepth(fCS_C + fCS_P + fCS_E, fZTemp, 1*(fT2 - fT1))){
   				double fTemp = GRand::RandDouble(0.0, fCS_C+fCS_P+fCS_E);
-  				if(fTemp <= fCS_C){//For now only one scatter at most.
-  					GRand::RandComptonAngle(E, fX, fY, fZ, fEs, fTheta, fPhi, 0);
-  					pGProc->pSpectrum->AddOneEvent(1000*(E-fEs));
+  				pVector->PointOnThis(fZTemp, fX, fY, fZ);
+  				if(fTemp <= fCS_C){
+  					pGProc->ScheduleEvent(new GCompton(time, fX, fY, fZ, E));
   				}
-  				else if(fTemp <= fCS_C+fCS_P){}
+  				else if(fTemp <= fCS_C + fCS_P){}
   				else{
-  					pGProc->pSpectrum->AddOneEvent(1000*E);
-  					//pGProc->ScheduleEvent(new GPhotoElec(t,0.0,0.0,0.0, E));
+  					pGProc->ScheduleEvent(new GPhotoElec(time, fX, fY, fZ, E));
   				}
   			}
   			break;
@@ -66,7 +66,11 @@ void GEmission::ProcessEvent(GSimProcess* pGProc){
 void GCompton::ProcessEvent(GSimProcess* pGProc){
 	double fX1, fY1, fZ1, fEs, fTheta, fPhi;
 	GRand::RandComptonAngle(E, fX1, fY1, fZ1, fEs, fTheta, fPhi, 0);
-	pGProc->pSpectrum->AddOneEvent(1000*(E-fEs));
+  	if(E-fEs > E_THR){
+  		pGProc->ScheduleEvent(new GEmission(time, fX1, fY1, fZ1, E-fEs));
+  		pGProc->pSpectrum->AddOneEvent(1000*(E-fEs));
+  	}
+  	else pGProc->pSpectrum->AddOneEvent(1000*E);
 }
 
 void GPhotoElec::ProcessEvent(GSimProcess* pGProc){

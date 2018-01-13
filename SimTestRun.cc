@@ -69,7 +69,7 @@ int main(){
   	//Attenuation coefficients
   	//double fCS_C, fCS_P, fCS_E;
   	std::cout << "Starting to pump queue with events"<< std::endl;
-  	while (t<1E7){//0.001 second of simulation
+  	while (t<1E7){//10 second of simulation
     	if(!GRand::RandTime2Decay(fActivity, tTemp)) break;
     	nTotalDecay ++;
     	t+=tTemp;
