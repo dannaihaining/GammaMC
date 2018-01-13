@@ -6,6 +6,7 @@
 
 class GCuboid{
 	private:
+	bool bDetector = false;
 	public:
 	//Diagonal points defining the cuboid
 	GPoint bl;
@@ -14,20 +15,24 @@ class GCuboid{
 	//This is a dangerous bug. I lef them as public so that
 	//GVector* GCuboidSource::GenerateOneRay() could call them. Need to fix.
 	
-	GCuboid(){
+	GCuboid(bool bIsDetector = false){
+		bDetector = bIsDetector;
 		bl.SetPos(0,0,0);
 		tr.SetPos(0,0,0);
 	}
-	GCuboid(double x1, double y1, double z1, double x2, double y2, double z2){
+	GCuboid(double x1, double y1, double z1, double x2, double y2, double z2, bool bIsDetector = false){
+		bDetector = bIsDetector;
 		bl.SetPos(x1, y1, z1);
 		tr.SetPos(x2, y2, z2);
 	}
-	GCuboid(GPoint gs_InBl, GPoint gs_InTr){
+	GCuboid(GPoint gs_InBl, GPoint gs_InTr, bool bIsDetector = false){
+		bDetector = bIsDetector;
 		bl.SetPos(gs_InBl.x, gs_InBl.y, gs_InBl.z);
 		tr.SetPos(gs_InTr.x, gs_InTr.y, gs_InTr.z);
 	}
 	//If a vector "collides" with cuboid. Return the timing of enter and exit.
 	bool IfCollide(GVector* g_sVec, double& t1, double &t2);
+	bool IsDetector(){ return bDetector; }
 };
 
 #endif

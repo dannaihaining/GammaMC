@@ -50,11 +50,11 @@ void GEmission::ProcessEvent(GSimProcess* pGProc){
   				double fTemp = GRand::RandDouble(0.0, fCS_C+fCS_P+fCS_E);
   				pVector->PointOnThis(fZTemp, fX, fY, fZ);
   				if(fTemp <= fCS_C){
-  					pGProc->ScheduleEvent(new GCompton(time, fX, fY, fZ, E));
+  					pGProc->ScheduleEvent(new GCompton(time, fX, fY, fZ, E, pGProc->vecGCuboid[i]->IsDetector()));
   				}
   				else if(fTemp <= fCS_C + fCS_P){}
   				else{
-  					pGProc->ScheduleEvent(new GPhotoElec(time, fX, fY, fZ, E));
+  					pGProc->ScheduleEvent(new GPhotoElec(time, fX, fY, fZ, E, pGProc->vecGCuboid[i]->IsDetector()));
   				}
   			}
   			break;
@@ -67,14 +67,15 @@ void GCompton::ProcessEvent(GSimProcess* pGProc){
 	double fX1, fY1, fZ1, fEs, fTheta, fPhi;
 	GRand::RandComptonAngle(E, fX1, fY1, fZ1, fEs, fTheta, fPhi, 0);
   	if(E-fEs > E_THR){
-  		pGProc->ScheduleEvent(new GEmission(time, fX1, fY1, fZ1, E-fEs));
-  		pGProc->pSpectrum->AddOneEvent(1000*(E-fEs));
+  		pGProc->ScheduleEvent(new GEmission(time, fX1, fY1, fZ1, E-fEs, bInDetector));
+  		//For now I assuemd all objects are detectors. I need to use a flag to mark some materials as non-detectors.
+  		if(bInDetector) pGProc->pSpectrum->AddOneEvent(1000*(E-fEs));
   	}
-  	else pGProc->pSpectrum->AddOneEvent(1000*E);
+  	else if(bInDetector) pGProc->pSpectrum->AddOneEvent(1000*E);
 }
 
 void GPhotoElec::ProcessEvent(GSimProcess* pGProc){
-	pGProc->pSpectrum->AddOneEvent(1000*E);
+	if(bInDetector) pGProc->pSpectrum->AddOneEvent(1000*E);
 }
 
 void GPairProd::ProcessEvent(GSimProcess* pGProc){
