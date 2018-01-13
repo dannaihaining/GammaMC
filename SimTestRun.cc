@@ -59,8 +59,6 @@ int main(){
   	double t=0.0;
   	double tTemp;
   	int nTotalDecay = 0;
-  	int nInteractions = 0;
-  	int nTrespass = 0;
   	double f_SourceE = 0.662;//Cs-137 source
   	GPointSource* pPointSource = new GPointSource(0.0,0.0,0.0);
   	//GCuboid* pTempObj1 = new GCuboid(-1,-1,1, 1,1,2.5);

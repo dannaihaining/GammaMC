@@ -27,3 +27,8 @@ add_executable(GSimTestRun SimTestRun.cc)
 # target_link_libraries(GSimTestRun GGometry GSource GSpectra GSimProcess GEvent)
 target_link_libraries(GSimTestRun GEvent GSimProcess)
 
+# Debug mode
+set(CMAKE_BUILD_TYPE "Debug")
+set(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb")
+set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
+

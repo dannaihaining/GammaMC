@@ -16,8 +16,7 @@ class GEvent{
   	
   	// Execute event by invoking this method.
   	virtual void ProcessEvent(GSimProcess* pGProc) = 0;
-  	const double time, E;
-  	const double x,y,z;
+  	const double time,x,y,z,E;
   	const bool bInDetector;
 };
 
