@@ -5,7 +5,7 @@
 //For now I just used the linear attenuation coefficient of CZT at 662 keV. (1/cm)
 #define DENSITY 5.8
 //Energy threshold for the simulation: 10 keV
-#define E_THR 0.1
+#define E_THR 0.01
 
 int nENum = 7;
 double fEnergy[7] = {0.01, 0.05, 0.1, 0.2, 0.4, 0.5, 0.662};
@@ -56,8 +56,8 @@ void GEmission::ProcessEvent(GSimProcess* pGProc){
   				else{
   					pGProc->ScheduleEvent(new GPhotoElec(time + fZTemp*Z2T_COEFF, fX, fY, fZ, E, pGProc->vecGCuboid[i]->IsDetector()));
   				}
+  				break;
   			}
-  			break;
 		}
 	}
 	delete pVector;
@@ -66,8 +66,8 @@ void GEmission::ProcessEvent(GSimProcess* pGProc){
 void GCompton::ProcessEvent(GSimProcess* pGProc){
 	double fX1, fY1, fZ1, fEs, fTheta, fPhi;
 	GRand::RandComptonAngle(E, fX1, fY1, fZ1, fEs, fTheta, fPhi, 0);
-  	if(E-fEs > E_THR){
-  		pGProc->ScheduleEvent(new GEmission(time, fX1, fY1, fZ1, E-fEs, bInDetector));
+  	if(fEs > E_THR){
+  		pGProc->ScheduleEvent(new GEmission(time, fX1, fY1, fZ1, fEs, bInDetector));
   		//For now I assuemd all objects are detectors. I need to use a flag to mark some materials as non-detectors.
   		if(bInDetector) pGProc->pSpectrum->AddOneEvent(1000*(E-fEs));
   	}
