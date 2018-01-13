@@ -50,11 +50,11 @@ void GEmission::ProcessEvent(GSimProcess* pGProc){
   				double fTemp = GRand::RandDouble(0.0, fCS_C+fCS_P+fCS_E);
   				pVector->PointOnThis(fZTemp, fX, fY, fZ);
   				if(fTemp <= fCS_C){
-  					pGProc->ScheduleEvent(new GCompton(time, fX, fY, fZ, E, pGProc->vecGCuboid[i]->IsDetector()));
+  					pGProc->ScheduleEvent(new GCompton(time + fZTemp*Z2T_COEFF, fX, fY, fZ, E, pGProc->vecGCuboid[i]->IsDetector()));
   				}
   				else if(fTemp <= fCS_C + fCS_P){}
   				else{
-  					pGProc->ScheduleEvent(new GPhotoElec(time, fX, fY, fZ, E, pGProc->vecGCuboid[i]->IsDetector()));
+  					pGProc->ScheduleEvent(new GPhotoElec(time + fZTemp*Z2T_COEFF, fX, fY, fZ, E, pGProc->vecGCuboid[i]->IsDetector()));
   				}
   			}
   			break;

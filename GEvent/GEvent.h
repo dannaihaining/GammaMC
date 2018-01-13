@@ -3,6 +3,9 @@
 
 #include <iostream>
 
+//Coefficient to convert distance (cm) in CZT to time of flight (us)
+#define Z2T_COEFF 9.133E-5 
+
 class GSimProcess; //Forward declaration. Some people do not like it!
 
 class GEvent{
