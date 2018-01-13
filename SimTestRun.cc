@@ -102,8 +102,10 @@ int main(){
   	}
   	//pSpectrum->Output("Spectrum_temp.txt");
   	// Run the simulation.
-  	GammaSim->run();
-  	GammaSim->OutputSpectrum();
+  	if(GammaSim->vecGCuboid.size()>0){
+	  	GammaSim->run();
+  		GammaSim->OutputSpectrum();
+  	}
   	
   	std::cout << "Total decays: " << nTotalDecay << std::endl;
   	

@@ -40,21 +40,25 @@ double fCS_C, fCS_P, fCS_E;
 void GEmission::ProcessEvent(GSimProcess* pGProc){
 	GVector* pVector = pGProc->pPointSource->GenerateOneRay();
 	GetAtten_All(E, fCS_C, fCS_P, fCS_E);
+	pGProc->ReOrderObjects(pVector);
 	double fT1, fT2, fX, fY, fZ, fEs, fTheta, fPhi;
-	if(pGProc->vecGCuboid[0]->IfCollide(pVector, fT1, fT2)){
-		double fZTemp;
-  		if(GRand::RandInteractionDepth(fCS_C+fCS_P+fCS_E,fZTemp,1*(fT2-fT1))){
-  			double fTemp = GRand::RandDouble(0.0, fCS_C+fCS_P+fCS_E);
-  			if(fTemp <= fCS_C){//For now only one scatter at most.
-  				GRand::RandComptonAngle(E, fX, fY, fZ, fEs, fTheta, fPhi, 0);
-  				pGProc->pSpectrum->AddOneEvent(1000*(E-fEs));
+	for(int i=0; i<pGProc->vecGCuboid.size(); i++){
+		if(pGProc->vecGCuboid[i]->IfCollide(pVector, fT1, fT2)){
+			double fZTemp;
+  			if(GRand::RandInteractionDepth(fCS_C+fCS_P+fCS_E,fZTemp,1*(fT2-fT1))){
+  				double fTemp = GRand::RandDouble(0.0, fCS_C+fCS_P+fCS_E);
+  				if(fTemp <= fCS_C){//For now only one scatter at most.
+  					GRand::RandComptonAngle(E, fX, fY, fZ, fEs, fTheta, fPhi, 0);
+  					pGProc->pSpectrum->AddOneEvent(1000*(E-fEs));
+  				}
+  				else if(fTemp <= fCS_C+fCS_P){}
+  				else{
+  					pGProc->pSpectrum->AddOneEvent(1000*E);
+  					//pGProc->ScheduleEvent(new GPhotoElec(t,0.0,0.0,0.0, E));
+  				}
   			}
-  			else if(fTemp <= fCS_C+fCS_P){}
-  			else{
-  				pGProc->pSpectrum->AddOneEvent(1000*E);
-  				//pGProc->ScheduleEvent(new GPhotoElec(t,0.0,0.0,0.0, E));
-  			}
-  		}
+  			break;
+		}
 	}
 	delete pVector;
 }

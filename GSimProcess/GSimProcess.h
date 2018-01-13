@@ -32,11 +32,12 @@ class GSimProcess{
   		pPointSource = new GPointSource(0.0,0.0,0.0);
   	}
   	~GSimProcess(){
+  		for(int i=0; i<vecGCuboid.size(); i++) delete vecGCuboid[i];
   		if(vecGCuboid.size()>0) vecGCuboid.erase(vecGCuboid.begin(), vecGCuboid.end());
   		delete pSpectrum;
-  		delete pTempObj1;
   		delete pPointSource;
   	}
+  	void ReOrderObjects(GVector* pVector);
   	void run();
   	void ScheduleEvent (GEvent * newEvent);
   	void OutputSpectrum();
