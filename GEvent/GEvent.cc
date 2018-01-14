@@ -5,7 +5,7 @@
 //For now I just used the linear attenuation coefficient of CZT at 662 keV. (1/cm)
 #define DENSITY 5.8
 //Energy threshold for the simulation: 10 keV
-#define E_THR 0.01
+#define E_THR 0.1
 
 int nENum = 7;
 double fEnergy[7] = {0.01, 0.05, 0.1, 0.2, 0.4, 0.5, 0.662};
