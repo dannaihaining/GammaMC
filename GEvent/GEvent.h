@@ -24,16 +24,21 @@ class GEvent{
 //Public inheritance is used to allow for casting (from derived class to base class)
 class GEmission:public GEvent{
 	public:
-  	GEmission (double t, double fX, double fY, double fZ, double fE, bool IsInDetector=false)
+  	GEmission (double t, double fX, double fY, double fZ, double fE, bool IsInDetector=false, bool bIfScattered = false, GVector* pInVector = nullptr)
     	: GEvent(t, fX, fY, fZ, fE, IsInDetector){
     		pPointSource = new GPointSource(fX, fY, fZ);
+    		bScattered = bIfScattered;
+    		if(bScattered) pVector = pInVector;
     	}
     ~GEmission(){
     	delete pPointSource;
+		delete pVector;
     }
   	virtual void ProcessEvent(GSimProcess* pGProc);
 	private:
 	GPointSource* pPointSource = nullptr;
+	bool bScattered;
+	GVector* pVector = nullptr;
 };
 
 class GCompton:public GEvent{

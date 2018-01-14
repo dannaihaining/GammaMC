@@ -31,9 +31,9 @@ class GSimProcess{
   	GSimProcess():time(0.0),eventQueue(){
   		pSpectrum = new GSpectra(1000, 1);
   		//First: a detector
-  		vecGCuboid.push_back(new GCuboid(-1,-1,1, 1,1,2.5, true));
+  		vecGCuboid.push_back(new GCuboid(-1,-1,1, 1,1,2.5, false));
   		//Second: a large block of CZT between the detector and the source.
-  		vecGCuboid.push_back(new GCuboid(-1,-1,0, 1,1,1, false));
+  		vecGCuboid.push_back(new GCuboid(-1,-1,0, 1,1,1, true));
   		
   		pPointSource = new GPointSource(0.0,0.0,0.0);
   	}

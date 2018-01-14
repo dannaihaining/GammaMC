@@ -59,8 +59,8 @@ int main(){
   	double t=0.0;
   	double tTemp;
   	int nTotalDecay = 0;
-  	//double f_SourceE = 0.662;//Cs-137 source
-  	double f_SourceE = 0.183;//Uranium line
+  	double f_SourceE = 0.662;//Cs-137 source
+  	//double f_SourceE = 0.183;//Uranium line
   	GPointSource* pPointSource = new GPointSource(0.0,0.0,0.0);
   	//GCuboid* pTempObj1 = new GCuboid(-1,-1,1, 1,1,2.5);
   	
