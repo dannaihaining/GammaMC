@@ -59,7 +59,8 @@ int main(){
   	double t=0.0;
   	double tTemp;
   	int nTotalDecay = 0;
-  	double f_SourceE = 0.662;//Cs-137 source
+  	//double f_SourceE = 0.662;//Cs-137 source
+  	double f_SourceE = 0.183;//Uranium line
   	GPointSource* pPointSource = new GPointSource(0.0,0.0,0.0);
   	//GCuboid* pTempObj1 = new GCuboid(-1,-1,1, 1,1,2.5);
   	
@@ -67,7 +68,7 @@ int main(){
   	//Attenuation coefficients
   	//double fCS_C, fCS_P, fCS_E;
   	std::cout << "Starting to pump queue with events"<< std::endl;
-  	while (t<3E7){//1000 second of simulation
+  	while (t<1E7){//1000 second of simulation
     	if(!GRand::RandTime2Decay(fActivity, tTemp)) break;
     	nTotalDecay ++;
     	t+=tTemp;

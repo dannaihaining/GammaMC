@@ -2,6 +2,7 @@
 #define EVENT_H
 
 #include <iostream>
+#include "../GSource/GSource.h"
 
 //Coefficient to convert distance (cm) in CZT to time of flight (us)
 #define Z2T_COEFF 9.133E-5 
@@ -24,9 +25,15 @@ class GEvent{
 class GEmission:public GEvent{
 	public:
   	GEmission (double t, double fX, double fY, double fZ, double fE, bool IsInDetector=false)
-    	: GEvent(t, fX, fY, fZ, fE, IsInDetector){}
+    	: GEvent(t, fX, fY, fZ, fE, IsInDetector){
+    		pPointSource = new GPointSource(fX, fY, fZ);
+    	}
+    ~GEmission(){
+    	delete pPointSource;
+    }
   	virtual void ProcessEvent(GSimProcess* pGProc);
 	private:
+	GPointSource* pPointSource = nullptr;
 };
 
 class GCompton:public GEvent{

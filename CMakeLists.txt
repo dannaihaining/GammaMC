@@ -18,6 +18,12 @@ add_subdirectory(GSimProcess)
 add_subdirectory(GSource)
 add_subdirectory(GSpectra)
 
+
+# Debug mode
+set(CMAKE_BUILD_TYPE "Debug")
+set(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb")
+set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
+
 # 指定生成目标
 add_executable(GSimTestRun SimTestRun.cc)
 
@@ -27,8 +33,5 @@ add_executable(GSimTestRun SimTestRun.cc)
 # target_link_libraries(GSimTestRun GGometry GSource GSpectra GSimProcess GEvent)
 target_link_libraries(GSimTestRun GEvent GSimProcess)
 
-# Debug mode
-set(CMAKE_BUILD_TYPE "Debug")
-set(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb")
-set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
-
+#Note: To compile with debug mode use:
+#	cmake -DCMAKE_BUILD_TYPE=Debug ..
