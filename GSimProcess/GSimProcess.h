@@ -26,7 +26,8 @@ class GSimProcess{
         GEventComparator> eventQueue;
 	public:
 	GSpectra* pSpectrum;
-  	GPointSource* pPointSource;
+  	//GPointSource* pPointSource;
+  	std::vector<GPointSource*> vecGPtSource;
   	std::vector<GCuboid*> vecGCuboid;
   	GSimProcess():time(0.0),eventQueue(){
   		pSpectrum = new GSpectra(1000, 1);
@@ -36,19 +37,23 @@ class GSimProcess{
   		//Second: a large block of CZT between the detector and the source.
   		vecGCuboid.push_back(new GCuboid(-1,-1,0, 1,1,1, false));
   		*/
-  		pPointSource = new GPointSource(0.0,0.0,0.0);
+  		//pPointSource = new GPointSource(0.0,0.0,0.0);
   	}
   	~GSimProcess(){
   		for(unsigned int i=0; i<vecGCuboid.size(); i++) delete vecGCuboid[i];
   		if(vecGCuboid.size()>0) vecGCuboid.erase(vecGCuboid.begin(), vecGCuboid.end());
+  		for(unsigned int i=0; i<vecGPtSource.size(); i++) delete vecGPtSource[i];
+  		if(vecGPtSource.size()>0) vecGPtSource.erase(vecGPtSource.begin(), vecGPtSource.end());
   		delete pSpectrum;
-  		delete pPointSource;
+  		//delete pPointSource;
   	}
   	void ReOrderObjects(GVector* pVector);
   	void Run();
   	void ScheduleEvent (GEvent * newEvent);
   	void OutputSpectrum();
+  	void AddNewSource(GPointSource* pPSource);
   	void AddNewObject(GCuboid* pGC);
+  	void PumpDecays(double fTime);
 };
 
 #endif

@@ -33,6 +33,23 @@ void GSimProcess::ReOrderObjects(GVector* pVector){
 	for(int i=0; i<vecGCuboid.size(); i++)
 		vecGCuboid[i] = pPairVec[i].second;
 }
+void GSimProcess::AddNewSource(GPointSource* pPSource){
+	vecGPtSource.push_back(pPSource);
+}
 void GSimProcess::AddNewObject(GCuboid* pGC){
 	vecGCuboid.push_back(pGC);
+}
+void GSimProcess::PumpDecays(double fTime){
+	double fActivity = 1;//1 uCi activity
+  	double t=0.0;
+  	double tTemp;
+  	for(unsigned int i=0; i<vecGPtSource.size(); i++){
+  		while (t < fTime){//fTime: length(time) of simulation
+    		if(!GRand::RandTime2Decay(fActivity, tTemp)) break;
+    		t+=tTemp;
+    		GVector* pVector = vecGPtSource[i]->GenerateOneRay();
+  			ScheduleEvent(new GEmission(t,0.0,0.0,0.0, vecGPtSource[i]->fEnergy, pVector));
+  		}
+  	}
+	
 }

@@ -26,7 +26,7 @@ class GEmission:public GEvent{
   	//GEmission (double t, double fX, double fY, double fZ, double fE, bool IsInDetector=false, bool bIfScattered = false, GVector* pInVector = nullptr)
   	GEmission (double t, double fX, double fY, double fZ, double fE, GVector* pInVector = nullptr)
     	: GEvent(t, fX, fY, fZ, fE){
-    		pPointSource = new GPointSource(fX, fY, fZ);
+    		pPointSource = new GPointSource(fX, fY, fZ, fE);
     		//bScattered = bIfScattered;
     		//if(bScattered) pVector = pInVector;
     		pVector = pInVector;

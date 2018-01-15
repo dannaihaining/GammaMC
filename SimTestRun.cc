@@ -61,9 +61,10 @@ int main(){
   	int nTotalDecay = 0;
   	double f_SourceE = 0.662;//Cs-137 source
   	//double f_SourceE = 0.183;//Uranium line
-  	GPointSource* pPointSource = new GPointSource(0.0,0.0,0.0);
-  	//GCuboid* pTempObj1 = new GCuboid(-1,-1,1, 1,1,2.5);
+  	GPointSource* pPointSource = new GPointSource(0.0,0.0,0.0, f_SourceE);
   	
+  	//Add a new point source
+  	GammaSim->AddNewSource(new GPointSource(0.0,0.0,0.0, f_SourceE));
   	//First: a detector
   	GammaSim->AddNewObject(new GCuboid(-1,-1,1, 1,1,2.5, true));
   	//Second: a large block of CZT between the detector and the source.
@@ -113,7 +114,8 @@ int main(){
   	
   	std::cout << "Total decays: " << nTotalDecay << std::endl;
   	
-  	delete pPointSource;
+  	//Some pointers will be released by the destructor of GammaSim.
+  	
   	//delete pSpectrum;
   	delete GammaSim;
   	
