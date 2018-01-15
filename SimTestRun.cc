@@ -72,11 +72,12 @@ int main(){
   	//Attenuation coefficients
   	//double fCS_C, fCS_P, fCS_E;
   	std::cout << "Starting to pump queue with events"<< std::endl;
-  	while (t<1E8){//100 second of simulation
+  	while (t<3E7){//100 second of simulation
     	if(!GRand::RandTime2Decay(fActivity, tTemp)) break;
     	nTotalDecay ++;
     	t+=tTemp;
-  		GammaSim->ScheduleEvent(new GEmission(t,0.0,0.0,0.0, f_SourceE));
+    	GVector* pVector = pPointSource->GenerateOneRay();
+  		GammaSim->ScheduleEvent(new GEmission(t,0.0,0.0,0.0, f_SourceE, pVector));
   		
   		/*
     	GetAtten_All_1(f_SourceE, fCS_C, fCS_P, fCS_E);

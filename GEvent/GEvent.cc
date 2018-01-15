@@ -41,7 +41,7 @@ double fCS_C, fCS_P, fCS_E;
 void GEmission::ProcessEvent(GSimProcess* pGProc){
 	//GVector* pVector = pGProc->pPointSource->GenerateOneRay();
 	//The new ray should not be from the same point source, instead each emission should have its own "virtual" point source. (Consider a Compton scattering event)
-	if(!bScattered) pVector = pPointSource->GenerateOneRay();
+	//if(!bScattered) pVector = pPointSource->GenerateOneRay();
 	GetAtten_All(E, fCS_C, fCS_P, fCS_E);
 	pGProc->ReOrderObjects(pVector);
 	double fT1, fT2, fX, fY, fZ;
@@ -72,7 +72,8 @@ void GCompton::ProcessEvent(GSimProcess* pGProc){
   		//The location of the new "virtual" emission is the same as the Compton scattering
   		//The direction of the "virtual" emission is sampled here and the pointer is deleted in ~GEmission().
   		GVector* pVector = new GVector(x, y, z, fX1, fY1, fZ1);
-  		pGProc->ScheduleEvent(new GEmission(time, x, y, z, fEs, bInDetector, true, pVector));
+  		//pGProc->ScheduleEvent(new GEmission(time, x, y, z, fEs, bInDetector, true, pVector));
+  		pGProc->ScheduleEvent(new GEmission(time, x, y, z, fEs, pVector));
   		//For now I assuemd all objects are detectors. I need to use a flag to mark some materials as non-detectors.
   		if(bInDetector) pGProc->pSpectrum->AddOneEvent(1000*(E-fEs));
   	}
