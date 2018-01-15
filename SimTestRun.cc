@@ -49,55 +49,37 @@ void GetAtten_All_1(double fE, double& fCS_C, double& fCS_P, double& fCS_E){
 
 int main(){
 	
-	//Note the spectrum class ONLY supports keV unit, with integer as bin size!
-	//GSpectra* pSpectrum = new GSpectra(1000, 1);
-	GSimProcess* GammaSim = new GSimProcess();
+	GSimProcess* pGammaSim = new GSimProcess();
 	srand(time(0));  // Initialize random number generator.
 	std::cout << "Gamma sim start" << std::endl;
-  	// Load queue with some number of initial events.
-  	//double fActivity = 1;//1 uCi activity
-  	//double t=0.0;
-  	//double tTemp;
-  	//int nTotalDecay = 0;
+	
+  	// Load queue with some number of initial emissions.
   	double f_SourceE = 0.662;//Cs-137 source
   	//double f_SourceE = 0.183;//Uranium line
-  	//GPointSource* pPointSource = new GPointSource(0.0,0.0,0.0, f_SourceE);
   	
   	//Add a new point source
-  	GammaSim->AddNewSource(new GPointSource(0.0,0.0,0.0, f_SourceE));
+  	pGammaSim->AddNewSource(new GPointSource(0.0,0.0,0.0, f_SourceE));
   	//First: a detector
-  	GammaSim->AddNewObject(new GCuboid(-1,-1,1, 1,1,2.5, true));
+  	pGammaSim->AddNewObject(new GCuboid(-1,-1,1, 1,1,2.5, true));
   	//Second: a large block of CZT between the detector and the source.
-  	GammaSim->AddNewObject(new GCuboid(-1,-1,0, 1,1,1, false));
+  	pGammaSim->AddNewObject(new GCuboid(-1,-1,0, 1,1,1, false));
   	
-  	//Attenuation coefficients
-  	//double fCS_C, fCS_P, fCS_E;
   	std::cout << "Starting to pump queue with events"<< std::endl;
-  	/*
-  	while (t<3E7){//100 second of simulation
-    	if(!GRand::RandTime2Decay(fActivity, tTemp)) break;
-    	nTotalDecay ++;
-    	t+=tTemp;
-    	GVector* pVector = pPointSource->GenerateOneRay();
-  		GammaSim->ScheduleEvent(new GEmission(t,0.0,0.0,0.0, f_SourceE, pVector));
-  	}*/
   	
-  	GammaSim->PumpDecays(3E7);
-  	
+  	pGammaSim->PumpDecays(3E7);
   	
   	std::cout << "Start simulation" << std::endl;
   	// Run the simulation.
-  	if(GammaSim->vecGCuboid.size()>0){
-	  	GammaSim->Run();
-  		GammaSim->OutputSpectrum();
+  	if(pGammaSim->vecGCuboid.size()>0){
+	  	pGammaSim->Run();
+  		pGammaSim->OutputSpectrum();
   	}
   	
   	std::cout << "Simulation finished" << std::endl;
-  	//std::cout << "Total decays: " << nTotalDecay << std::endl;
   	
-  	//Some pointers will be released by the destructor of GammaSim.
+  	//Some pointers will be released by the destructor of pGammaSim.
   	//delete pSpectrum;
-  	delete GammaSim;
+  	delete pGammaSim;
   	
 	return 0;
 }
