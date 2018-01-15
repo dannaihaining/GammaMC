@@ -30,11 +30,12 @@ class GSimProcess{
   	std::vector<GCuboid*> vecGCuboid;
   	GSimProcess():time(0.0),eventQueue(){
   		pSpectrum = new GSpectra(1000, 1);
+  		/*
   		//First: a detector
-  		vecGCuboid.push_back(new GCuboid(-1,-1,1, 1,1,2.5, false));
+  		vecGCuboid.push_back(new GCuboid(-1,-1,1, 1,1,2.5, true));
   		//Second: a large block of CZT between the detector and the source.
-  		vecGCuboid.push_back(new GCuboid(-1,-1,0, 1,1,1, true));
-  		
+  		vecGCuboid.push_back(new GCuboid(-1,-1,0, 1,1,1, false));
+  		*/
   		pPointSource = new GPointSource(0.0,0.0,0.0);
   	}
   	~GSimProcess(){
@@ -44,9 +45,10 @@ class GSimProcess{
   		delete pPointSource;
   	}
   	void ReOrderObjects(GVector* pVector);
-  	void run();
+  	void Run();
   	void ScheduleEvent (GEvent * newEvent);
   	void OutputSpectrum();
+  	void AddNewObject(GCuboid* pGC);
 };
 
 #endif

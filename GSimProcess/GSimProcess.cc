@@ -2,7 +2,7 @@
 #include <iostream>
 
 
-void GSimProcess::run(){
+void GSimProcess::Run(){
 	while (!eventQueue.empty()){
   		GEvent * nextEvent = eventQueue.top();
    		eventQueue.pop();
@@ -32,4 +32,7 @@ void GSimProcess::ReOrderObjects(GVector* pVector){
 	sort(pPairVec.begin(), pPairVec.end());
 	for(int i=0; i<vecGCuboid.size(); i++)
 		vecGCuboid[i] = pPairVec[i].second;
+}
+void GSimProcess::AddNewObject(GCuboid* pGC){
+	vecGCuboid.push_back(pGC);
 }

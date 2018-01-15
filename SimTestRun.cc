@@ -64,11 +64,15 @@ int main(){
   	GPointSource* pPointSource = new GPointSource(0.0,0.0,0.0);
   	//GCuboid* pTempObj1 = new GCuboid(-1,-1,1, 1,1,2.5);
   	
+  	//First: a detector
+  	GammaSim->AddNewObject(new GCuboid(-1,-1,1, 1,1,2.5, true));
+  	//Second: a large block of CZT between the detector and the source.
+  	GammaSim->AddNewObject(new GCuboid(-1,-1,0, 1,1,1, false));
   	
   	//Attenuation coefficients
   	//double fCS_C, fCS_P, fCS_E;
   	std::cout << "Starting to pump queue with events"<< std::endl;
-  	while (t<1E7){//1000 second of simulation
+  	while (t<1E8){//100 second of simulation
     	if(!GRand::RandTime2Decay(fActivity, tTemp)) break;
     	nTotalDecay ++;
     	t+=tTemp;
@@ -102,7 +106,7 @@ int main(){
   	//pSpectrum->Output("Spectrum_temp.txt");
   	// Run the simulation.
   	if(GammaSim->vecGCuboid.size()>0){
-	  	GammaSim->run();
+	  	GammaSim->Run();
   		GammaSim->OutputSpectrum();
   	}
   	
