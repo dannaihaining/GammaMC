@@ -55,13 +55,13 @@ int main(){
 	srand(time(0));  // Initialize random number generator.
 	std::cout << "Gamma sim start" << std::endl;
   	// Load queue with some number of initial events.
-  	double fActivity = 1;//1 uCi activity
-  	double t=0.0;
-  	double tTemp;
-  	int nTotalDecay = 0;
+  	//double fActivity = 1;//1 uCi activity
+  	//double t=0.0;
+  	//double tTemp;
+  	//int nTotalDecay = 0;
   	double f_SourceE = 0.662;//Cs-137 source
   	//double f_SourceE = 0.183;//Uranium line
-  	GPointSource* pPointSource = new GPointSource(0.0,0.0,0.0, f_SourceE);
+  	//GPointSource* pPointSource = new GPointSource(0.0,0.0,0.0, f_SourceE);
   	
   	//Add a new point source
   	GammaSim->AddNewSource(new GPointSource(0.0,0.0,0.0, f_SourceE));
@@ -73,49 +73,29 @@ int main(){
   	//Attenuation coefficients
   	//double fCS_C, fCS_P, fCS_E;
   	std::cout << "Starting to pump queue with events"<< std::endl;
+  	/*
   	while (t<3E7){//100 second of simulation
     	if(!GRand::RandTime2Decay(fActivity, tTemp)) break;
     	nTotalDecay ++;
     	t+=tTemp;
     	GVector* pVector = pPointSource->GenerateOneRay();
   		GammaSim->ScheduleEvent(new GEmission(t,0.0,0.0,0.0, f_SourceE, pVector));
-  		
-  		/*
-    	GetAtten_All_1(f_SourceE, fCS_C, fCS_P, fCS_E);
-    	GVector* pVector = pPointSource->GenerateOneRay();
-		double fT1, fT2, fX, fY, fZ, fEs, fTheta, fPhi;
-  		if(pTempObj1->IfCollide(pVector, fT1, fT2)){
-  			nTrespass++;
-  			
-  			double fZTemp;
-  			if(GRand::RandInteractionDepth(fCS_C+fCS_P+fCS_E,fZTemp,1*(fT2-fT1))){
-  				nInteractions++;
-  				double fTemp = GRand::RandDouble(0.0, fCS_C+fCS_P+fCS_E);
-  				if(fTemp <= fCS_C){//For now only one scatter at most.
-  					GRand::RandComptonAngle(f_SourceE, fX, fY, fZ, fEs, fTheta, fPhi, 0);
-  					//pSpectrum->AddOneEvent(1000*(f_SourceE-fEs));
-  				}
-  				else if(fTemp <= fCS_C+fCS_P){}
-  				else{
-  					//pSpectrum->AddOneEvent(1000*f_SourceE);
-  				}
-  			}
-  		}
-  		
-    	delete pVector;
-    	*/
-  	}
-  	//pSpectrum->Output("Spectrum_temp.txt");
+  	}*/
+  	
+  	GammaSim->PumpDecays(3E7);
+  	
+  	
+  	std::cout << "Start simulation" << std::endl;
   	// Run the simulation.
   	if(GammaSim->vecGCuboid.size()>0){
 	  	GammaSim->Run();
   		GammaSim->OutputSpectrum();
   	}
   	
-  	std::cout << "Total decays: " << nTotalDecay << std::endl;
+  	std::cout << "Simulation finished" << std::endl;
+  	//std::cout << "Total decays: " << nTotalDecay << std::endl;
   	
   	//Some pointers will be released by the destructor of GammaSim.
-  	
   	//delete pSpectrum;
   	delete GammaSim;
   	
