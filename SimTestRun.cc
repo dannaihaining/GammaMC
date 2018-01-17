@@ -85,7 +85,7 @@ bool ProcessConfig(GSimProcess* pGammaSim){
     		if(!(iss >> x >> y >> z >> E >> fA)) bIfInputValid = false;
     		std::cout<<"Add point source, x="<<x<<", y="<<y<<", z="<<z;
     		std::cout<<", Energy: " << E << " MeV" <<", Activity: "<<fA<<" uCi."<<std::endl;
-    		pGammaSim->AddNewSource(new GPointSource(x, y, z, E));
+    		pGammaSim->AddNewSource(new GPointSource(x, y, z, E, fA));
     	}
     	//Input object type
     	if(std::regex_search (line,m,rCuboidObject)){
