@@ -4,6 +4,8 @@
 #include <queue>
 #include <limits>
 #include <utility>      // std::pair, std::make_pair
+#include <chrono>
+#include <thread>
 #include "../GEvent/GEvent.h"
 #include "../GSpectra/GSpectra.h"
 #include "../GGeometry/GCuboid.h"

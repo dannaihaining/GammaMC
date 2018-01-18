@@ -43,13 +43,43 @@ void GSimProcess::PumpDecays(double fTime){
 	//double fActivity = 1;//1 uCi activity
   	double t=0.0;
   	double tTemp;
+  	
+  	//////////////
+  	//Progress bar
+  	int nBarWidth = 70;
+  	int nProgPos = 0.0;
+  	double fProgress = 0.0;
+  	double fCt = 0.0;
+  	///////////////////
+  	
   	for(unsigned int i=0; i<vecGPtSource.size(); i++){
+  		
+  		std::cout << "Source " << (i+1) << " emitting ..." << std::endl;
+  		
   		while (t < fTime){//fTime: length(time) of simulation
     		if(!GRand::RandTime2Decay(vecGPtSource[i]->fActivity, tTemp)) break;
     		t+=tTemp;
     		GVector* pVector = vecGPtSource[i]->GenerateOneRay();
   			ScheduleEvent(new GEmission(t,0.0,0.0,0.0, vecGPtSource[i]->fEnergy, pVector));
+
+			//Progress bar
+  			fProgress = t/fTime;
+  			nProgPos = fProgress*nBarWidth;
+  			fCt += tTemp/fTime;
+  			if(fCt>0.05){
+  				std::cout << "[";
+  				for (int i = 0; i < nBarWidth; ++i) {
+        			if (i < nProgPos) std::cout << "=";
+        			else if (i == nProgPos) std::cout << ">";
+        			else std::cout << " ";
+    			}
+    			std::cout << "] " << int(fProgress * 100.0) << " %\r";
+    			std::cout.flush();
+  				fCt=0.0;
+  			}
+  			//////////
   		}
+  		
+  		std::cout << std::endl;
   	}
-	
 }
