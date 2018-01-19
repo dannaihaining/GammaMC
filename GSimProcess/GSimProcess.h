@@ -56,6 +56,7 @@ class GSimProcess{
   	void AddNewSource(GPointSource* pPSource);
   	void AddNewObject(GCuboid* pGC);
   	void PumpDecays(double fTime);
+  	bool ObjectConstraintTest();
 };
 
 #endif

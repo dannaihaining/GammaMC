@@ -110,7 +110,12 @@ bool ProcessConfig(GSimProcess* pGammaSim){
 	}
 	if(fTime<=0.0){
 		std::cout<< "Input time length invalid!" << std::endl;
+		return false;
 	}
+	if(!pGammaSim->ObjectConstraintTest()){
+    		std::cout<<"Input objects are overlapping"<<std::endl;
+    		return false;
+    	}
 	std::cout<< "Simulation time length " << fTime << "seconds." << std::endl;
 	pGammaSim->PumpDecays(fTime);
 	return true;
