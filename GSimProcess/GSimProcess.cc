@@ -84,6 +84,7 @@ void GSimProcess::PumpDecays(double fTime){
   	}
 }
 bool GSimProcess::ObjectConstraintTest(){
+	std::cout<< "Testing" <<std::endl;
 	if(vecGCuboid.size() <= 1) return true;
 	else{
 		for(int i=0; i<vecGCuboid.size(); i++){
@@ -92,6 +93,9 @@ bool GSimProcess::ObjectConstraintTest(){
 				double P1[2] = {vecGCuboid[i]->bl.x, vecGCuboid[i]->tr.x};
 				double P2[2] = {vecGCuboid[i]->bl.y, vecGCuboid[i]->tr.y}; 
 				double P3[2] = {vecGCuboid[i]->bl.z, vecGCuboid[i]->tr.z};
+				if((P1[0]/2+P1[1]/2-vecGCuboid[j]->bl.x)*(P1[0]/2+P1[1]/2-vecGCuboid[j]->tr.x)<0 &&
+					(P2[0]/2+P2[1]/2-vecGCuboid[j]->bl.x)*(P2[0]/2+P2[1]/2-vecGCuboid[j]->tr.x)<0 &&
+					(P3[0]/2+P3[1]/2-vecGCuboid[j]->bl.x)*(P3[0]/2+P3[1]/2-vecGCuboid[j]->tr.x)<0) return false;
 				for(int l=0; l<2; l++){
 					for(int m=0; m<2; m++){
 						for(int n=0; n<2; n++){
