@@ -6,12 +6,14 @@
 #include <utility>      // std::pair, std::make_pair
 #include <chrono>
 #include <thread>
+#include <math.h>
 #include "../GEvent/GEvent.h"
 #include "../GSpectra/GSpectra.h"
 #include "../GGeometry/GCuboid.h"
 #include "../GGeometry/GVector.h"
 #include "../GSource/GSource.h"
 #include "../GRand/GRand.h"
+#include "../GRand/GNoise.h"
 
 struct GEventComparator{
 	bool operator() (const GEvent * left, const GEvent * right) const{
@@ -22,17 +24,20 @@ struct GEventComparator{
 class GSimProcess{
   	private:
   	double time;
+  	GNoise* pNoiseGen;
+	GSpectra* pSpectrum;
+  	
 	protected:
   	std::priority_queue<GEvent*,
   		std::vector<GEvent *, std::allocator<GEvent*> >,
         GEventComparator> eventQueue;
+	
 	public:
-	GSpectra* pSpectrum;
-  	//GPointSource* pPointSource;
   	std::vector<GPointSource*> vecGPtSource;
   	std::vector<GCuboid*> vecGCuboid;
   	GSimProcess():time(0.0),eventQueue(){
   		pSpectrum = new GSpectra(1000, 1);
+  		pNoiseGen = new GNoise(0.1, 0.0);
   		/*
   		//First: a detector
   		vecGCuboid.push_back(new GCuboid(-1,-1,1, 1,1,2.5, true));
@@ -47,12 +52,14 @@ class GSimProcess{
   		for(unsigned int i=0; i<vecGPtSource.size(); i++) delete vecGPtSource[i];
   		if(vecGPtSource.size()>0) vecGPtSource.erase(vecGPtSource.begin(), vecGPtSource.end());
   		delete pSpectrum;
+  		delete pNoiseGen;
   		//delete pPointSource;
   	}
   	void ReOrderObjects(GVector* pVector);
   	void Run();
   	void ScheduleEvent (GEvent * newEvent);
   	void OutputSpectrum();
+  	void Add2Spec(const double fE, const bool bNoise = false);
   	void AddNewSource(GPointSource* pPSource);
   	void AddNewObject(GCuboid* pGC);
   	void PumpDecays(double fTime);

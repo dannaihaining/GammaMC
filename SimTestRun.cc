@@ -66,6 +66,7 @@ bool ProcessConfig(GSimProcess* pGammaSim){
 	
 	double fTime = 0.0;
 	
+	
 	while (std::getline(infile, line))
 	{
     	if(std::regex_search (line,m,rComment)) continue;
@@ -156,7 +157,6 @@ int main(){
   	std::cout << "Simulation finished" << std::endl;
   	
   	//Some pointers will be released by the destructor of pGammaSim.
-  	//delete pSpectrum;
   	delete pGammaSim;
   	
 	return 0;

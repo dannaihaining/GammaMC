@@ -19,6 +19,7 @@
 class GRand{
 	public:
   	GRand(){}
+  	
   	static int RandInt(int n){
   		return rand()%n;
   	}
@@ -98,6 +99,7 @@ class GRand{
   		}
   		return true;
   	}
+  	
   	private:
   	//In C++11, the following data members may be initialized in class declaration:
   	//non-static members
@@ -114,6 +116,8 @@ class GRand{
   			*fTemp2*fTemp2;
   		return fDiffCS;
   	}
+
+  	
 };
 
 #endif

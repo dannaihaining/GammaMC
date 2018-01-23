@@ -83,6 +83,12 @@ void GSimProcess::PumpDecays(double fTime){
 	}
 }
 
+void GSimProcess::Add2Spec(const double fE, const bool bNoise){
+	//fE unit: keV
+	if(!bNoise) pSpectrum->AddOneEvent(fE);
+	else pSpectrum->AddOneEvent(fE + 0.001 * pNoiseGen->fGaussianSampler( sqrt(fE * 200) ));
+}
+
 bool GSimProcess::ObjectConstraintTest(){
 	std::cout<< "Testing" <<std::endl;
 	if(vecGCuboid.size() <= 1) return true;
