@@ -27,8 +27,6 @@ class GSimProcess{
   	GNoise* pStatNoise;
   	GNoise* pElecNoise;
 	GSpectra* pSpectrum;
-  	std::vector<GPointSource*> vecGPtSource;
-  	std::vector<GCuboid*> vecGCuboid;
   	
 	protected:
   	std::priority_queue<GEvent*,
@@ -36,6 +34,8 @@ class GSimProcess{
         GEventComparator> eventQueue;
 	
 	public:
+  	std::vector<GPointSource*> vecGPtSource;
+  	std::vector<GCuboid*> vecGCuboid;
   	GSimProcess():time(0.0),eventQueue(){
   		pSpectrum = new GSpectra(1000, 1);
   		pStatNoise = new GNoise(0.1, 0.0);
