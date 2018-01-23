@@ -24,7 +24,8 @@ struct GEventComparator{
 class GSimProcess{
   	private:
   	double time;
-  	GNoise* pNoiseGen;
+  	GNoise* pStatNoise;
+  	GNoise* pElecNoise;
 	GSpectra* pSpectrum;
   	
 	protected:
@@ -37,7 +38,8 @@ class GSimProcess{
   	std::vector<GCuboid*> vecGCuboid;
   	GSimProcess():time(0.0),eventQueue(){
   		pSpectrum = new GSpectra(1000, 1);
-  		pNoiseGen = new GNoise(0.1, 0.0);
+  		pStatNoise = new GNoise(0.1, 0.0);
+  		pElecNoise = new GNoise(1.0, 0.0);
   		/*
   		//First: a detector
   		vecGCuboid.push_back(new GCuboid(-1,-1,1, 1,1,2.5, true));
@@ -52,7 +54,8 @@ class GSimProcess{
   		for(unsigned int i=0; i<vecGPtSource.size(); i++) delete vecGPtSource[i];
   		if(vecGPtSource.size()>0) vecGPtSource.erase(vecGPtSource.begin(), vecGPtSource.end());
   		delete pSpectrum;
-  		delete pNoiseGen;
+  		delete pStatNoise;
+  		delete pElecNoise;
   		//delete pPointSource;
   	}
   	void ReOrderObjects(GVector* pVector);

@@ -86,7 +86,7 @@ void GSimProcess::PumpDecays(double fTime){
 void GSimProcess::Add2Spec(const double fE, const bool bNoise){
 	//fE unit: keV
 	if(!bNoise) pSpectrum->AddOneEvent(fE);
-	else pSpectrum->AddOneEvent(fE + 0.001 * pNoiseGen->fGaussianSampler( sqrt(fE * 200) ));
+	else pSpectrum->AddOneEvent(fE + pStatNoise->fGaussianSampler( 2.35*sqrt(fE * 0.005) ) + pElecNoise->fGaussianSampler( 1.4 ));
 }
 
 bool GSimProcess::ObjectConstraintTest(){
