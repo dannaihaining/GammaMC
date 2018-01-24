@@ -3,13 +3,52 @@
 
 
 void GSimProcess::Run(){
+	
+	///////////
+	//Progress bar
+	int nMaxSize = eventQueue.size();
+	int nProcessed = 0;
+	int nBarWidth = 70;
+  	int nProgPos = 0.0;
+  	double fProgress = 0.0;
+  	int nCt = 0.0;
+	////////////////
+	
 	while (!eventQueue.empty()){
   		GEvent * nextEvent = eventQueue.top();
    		eventQueue.pop();
    		time = nextEvent->time;
    		nextEvent->ProcessEvent(this);
    		delete nextEvent;
+   		
+		
+   		///////////
+		//Progress bar
+		if(eventQueue.size()==0) break;
+		nProcessed ++;
+		nCt ++;
+		if(eventQueue.size()>nMaxSize) nMaxSize = eventQueue.size();
+  		fProgress = (double)nProcessed/nMaxSize;
+  		if(fProgress>1.0) fProgress = 1.0;
+  		if((double)nCt/nMaxSize>0.05){
+  			nProgPos = fProgress*nBarWidth;
+  			std::cout << "[";
+  			for (int i = 0; i < nBarWidth; ++i) {
+        		if (i < nProgPos) std::cout << "=";
+        		else if (i == nProgPos) std::cout << ">";
+        		else std::cout << " ";
+    		}
+    		std::cout << "] " << int(fProgress * 100.0) << " %\r";
+    		std::cout.flush();
+  			nCt=0;
+  		}
+  		//////////
+   		
 	}
+	///////////
+	//Progress bar
+	std::cout << std::endl;
+	/////////////
 }
 void GSimProcess::ScheduleEvent (GEvent * newEvent) {
    	eventQueue.push (newEvent);
@@ -62,6 +101,7 @@ void GSimProcess::PumpDecays(double fTime){
     		GVector* pVector = vecGPtSource[i]->GenerateOneRay();
   			ScheduleEvent(new GEmission(t,0.0,0.0,0.0, vecGPtSource[i]->fEnergy, pVector));
 
+			///////////
 			//Progress bar
   			fProgress = t/fTime;
   			nProgPos = fProgress*nBarWidth;
