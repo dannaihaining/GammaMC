@@ -16,39 +16,6 @@
 #include <regex>
 
 
-//For now I just used the linear attenuation coefficient of CZT at 662 keV. (1/cm)
-/*
-#define DENSITY 5.8
-#define E_THR 10
-int nENum_1 = 7;
-double fEnergy_1[7] = {0.01, 0.05, 0.1, 0.2, 0.4, 0.5, 0.662};
-double fCS_Compton_1[7] = {0.06, 0.11, 0.1103, 0.09715, 0.07803, 0.07164, 0.0638};
-double fCS_PP_1[7] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-double fCS_PE_1[7] = {135.4, 10.24, 1.463, 0.1994, 0.02917, 0.01641, 0.008302};
-
-void GetAtten_All_1(double fE, double& fCS_C, double& fCS_P, double& fCS_E){
-	if(fE<=fEnergy_1[0]){
-		fCS_C = fCS_Compton_1[0];
-		fCS_P = fCS_PP_1[0];
-		fCS_E = fCS_PE_1[0];
-		return;
-	}
-	if(fE>=fEnergy_1[nENum_1-1]){
-		fCS_C = fCS_Compton_1[nENum_1-1];
-		fCS_P = fCS_PP_1[nENum_1-1];
-		fCS_E = fCS_PE_1[nENum_1-1];
-		return;
-	}
-	int i=0;
-	while(fE>fEnergy_1[i]) i++;
-	//atteuation by interpolation
-	double fInterpRatio = (fE-fEnergy_1[i])/(fEnergy_1[i+1]-fEnergy_1[i]);
-	fCS_C = fCS_Compton_1[i] + fInterpRatio*(fCS_Compton_1[i+1]-fCS_Compton_1[i]);
-	fCS_P = fCS_PP_1[i] + fInterpRatio*(fCS_PP_1[i+1]-fCS_PP_1[i]);
-	fCS_E = fCS_PE_1[i] + fInterpRatio*(fCS_PE_1[i+1]-fCS_PE_1[i]);
-	return;
-}
-*/
 
 bool ProcessConfig(GSimProcess* pGammaSim){
 	std::ifstream infile("../Settings.ini");//No need to release the memory manually this way
@@ -103,6 +70,7 @@ bool ProcessConfig(GSimProcess* pGammaSim){
     		std::cout<<std::endl;
     		std::cout<<"Position: "<<x1<<" "<<y1<<" "<<z1<<" "<<x2<<" "<<y2<<" "<<z2<<" "<<std::endl;
     		pGammaSim->AddNewObject(new GCuboid(x1, y1, z1, x2, y2, z2, (nIsDetector>0)));
+    		if(nIsDetector) pGammaSim->AddNewSpectrum(new GSpectra(1000, 1));
     	}
     	if(!bIfInputValid){
     		std::cout<<"Input file exception"<<std::endl;

@@ -26,7 +26,8 @@ class GSimProcess{
   	double time;
   	GNoise* pStatNoise;
   	GNoise* pElecNoise;
-	GSpectra* pSpectrum;
+	std::vector<GSpectra*> vecGSpec;
+	//GSpectra* pSpectrum;
   	
 	protected:
   	std::priority_queue<GEvent*,
@@ -37,7 +38,7 @@ class GSimProcess{
   	std::vector<GPointSource*> vecGPtSource;
   	std::vector<GCuboid*> vecGCuboid;
   	GSimProcess():time(0.0),eventQueue(){
-  		pSpectrum = new GSpectra(1000, 1);
+  		//pSpectrum = new GSpectra(1000, 1);
   		pStatNoise = new GNoise(0.1, 0.0);
   		pElecNoise = new GNoise(1.0, 0.0);
   		/*
@@ -52,7 +53,9 @@ class GSimProcess{
   		if(vecGCuboid.size()>0) vecGCuboid.erase(vecGCuboid.begin(), vecGCuboid.end());
   		for(unsigned int i=0; i<vecGPtSource.size(); i++) delete vecGPtSource[i];
   		if(vecGPtSource.size()>0) vecGPtSource.erase(vecGPtSource.begin(), vecGPtSource.end());
-  		delete pSpectrum;
+  		for(unsigned int i=0; i<vecGSpec.size(); i++) delete vecGSpec[i];
+  		if(vecGSpec.size()>0) vecGSpec.erase(vecGSpec.begin(), vecGSpec.end());
+  		//delete pSpectrum;
   		delete pStatNoise;
   		delete pElecNoise;
   	}
@@ -63,6 +66,7 @@ class GSimProcess{
   	void Add2Spec(const double fE, const bool bNoise = false);
   	void AddNewSource(GPointSource* pPSource);
   	void AddNewObject(GCuboid* pGC);
+  	void AddNewSpectrum(GSpectra* pSpec);
   	void PumpDecays(double fTime);
   	bool ObjectConstraintTest();
 };

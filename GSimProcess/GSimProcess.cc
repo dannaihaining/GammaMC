@@ -1,6 +1,6 @@
 #include "GSimProcess.h"
 #include <iostream>
-
+#include <sstream>
 
 void GSimProcess::Run(){
 	
@@ -54,7 +54,11 @@ void GSimProcess::ScheduleEvent (GEvent * newEvent) {
    	eventQueue.push (newEvent);
 }
 void GSimProcess::OutputSpectrum(){
-	pSpectrum->Output("SimEnergySpec.txt");
+	for(unsigned int i=0; i<vecGSpec.size(); i++){
+		std::ostringstream oss;
+		oss << "Spectrum_Detector" << i <<".txt";
+		vecGSpec[i]->Output(oss.str());
+	}
 }
 //Sort the objects based on whichever is first entered by the vector.
 void GSimProcess::ReOrderObjects(GVector* pVector){
@@ -77,6 +81,9 @@ void GSimProcess::AddNewSource(GPointSource* pPSource){
 }
 void GSimProcess::AddNewObject(GCuboid* pGC){
 	vecGCuboid.push_back(pGC);
+}
+void GSimProcess::AddNewSpectrum(GSpectra* pSpec){
+	vecGSpec.push_back(pSpec);
 }
 void GSimProcess::PumpDecays(double fTime){
 	//double fActivity = 1;//1 uCi activity
@@ -125,8 +132,8 @@ void GSimProcess::PumpDecays(double fTime){
 
 void GSimProcess::Add2Spec(const double fE, const bool bNoise){
 	//fE unit: keV
-	if(!bNoise) pSpectrum->AddOneEvent(fE);
-	else pSpectrum->AddOneEvent(fE + pStatNoise->fGaussianSampler( 2.35*sqrt(fE * 0.005) ) + pElecNoise->fGaussianSampler( 1.4 ));
+	if(!bNoise) vecGSpec[0]->AddOneEvent(fE);
+	else vecGSpec[0]->AddOneEvent(fE + pStatNoise->fGaussianSampler( 2.35*sqrt(fE * 0.005) ) + pElecNoise->fGaussianSampler( 1.4 ));
 }
 
 bool GSimProcess::ObjectConstraintTest(){
