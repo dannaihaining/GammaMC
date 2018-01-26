@@ -118,7 +118,10 @@ int main(){
   	std::cout << "Start simulation" << std::endl;
   	// Run the simulation.
   	if(pGammaSim->vecGCuboid.size()>0){
-	  	pGammaSim->Run();
+	  	//pGammaSim->Run();
+	  	pGammaSim->ThreadStartRun();
+	  	//thrSim_ = std::thread(&GSimProcess::Run, pGammaSim);
+	  	//if(thrSim_.joinable()) thrSim_.join();
   		pGammaSim->OutputSpectrum();
   	}
   	

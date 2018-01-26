@@ -2,6 +2,11 @@
 #include <iostream>
 #include <sstream>
 
+void GSimProcess::ThreadStartRun(){
+	thrSim_ = std::thread(&GSimProcess::Run, this);
+	if(thrSim_.joinable()) thrSim_.join();
+}
+
 void GSimProcess::Run(){
 	
 	///////////
@@ -130,10 +135,11 @@ void GSimProcess::PumpDecays(double fTime){
 	}
 }
 
-void GSimProcess::Add2Spec(const double fE, const bool bNoise){
+void GSimProcess::Add2Spec(const double fE, int nDetectorNum, const bool bNoise){
 	//fE unit: keV
-	if(!bNoise) vecGSpec[0]->AddOneEvent(fE);
-	else vecGSpec[0]->AddOneEvent(fE + pStatNoise->fGaussianSampler( 2.35*sqrt(fE * 0.005) ) + pElecNoise->fGaussianSampler( 1.4 ));
+	if(nDetectorNum>=vecGSpec.size()) nDetectorNum = 0;
+	if(!bNoise) vecGSpec[nDetectorNum]->AddOneEvent(fE);
+	else vecGSpec[nDetectorNum]->AddOneEvent(fE + pStatNoise->fGaussianSampler( 2.35*sqrt(fE * 0.005) ) + pElecNoise->fGaussianSampler( 1.4 ));
 }
 
 bool GSimProcess::ObjectConstraintTest(){

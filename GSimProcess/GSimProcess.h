@@ -7,6 +7,7 @@
 #include <chrono>
 #include <thread>
 #include <math.h>
+#include <thread>         // std::thread, std::this_thread::sleep_for
 #include "../GEvent/GEvent.h"
 #include "../GSpectra/GSpectra.h"
 #include "../GGeometry/GCuboid.h"
@@ -28,6 +29,7 @@ class GSimProcess{
   	GNoise* pElecNoise;
 	std::vector<GSpectra*> vecGSpec;
 	//GSpectra* pSpectrum;
+  	std::thread thrSim_;
   	
 	protected:
   	std::priority_queue<GEvent*,
@@ -61,9 +63,10 @@ class GSimProcess{
   	}
   	void ReOrderObjects(GVector* pVector);
   	void Run();
+  	void ThreadStartRun();
   	void ScheduleEvent (GEvent * newEvent);
   	void OutputSpectrum();
-  	void Add2Spec(const double fE, const bool bNoise = false);
+  	void Add2Spec(const double fE, int nDetectorNum=0, const bool bNoise = false);
   	void AddNewSource(GPointSource* pPSource);
   	void AddNewObject(GCuboid* pGC);
   	void AddNewSpectrum(GSpectra* pSpec);
