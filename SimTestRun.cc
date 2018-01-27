@@ -15,6 +15,8 @@
 #include <string>
 #include <regex>
 
+int nNumOfThreads = 1;
+
 bool ProcessConfig(GSimProcess* pGammaSim){
 	std::ifstream infile("../Settings.ini");//No need to release the memory manually this way
 	std::string line;
@@ -25,6 +27,7 @@ bool ProcessConfig(GSimProcess* pGammaSim){
     std::regex rPointSouce ("^SOURCE_POINT");
     std::regex rCuboidObject ("^OBJ_CUBOID");
     std::regex rNoiseE ("^NOISE_E");
+    std::regex rThread ("^THREAD_NUM");
     std::smatch m;
     std::string strKeyWord;
     
@@ -80,6 +83,14 @@ bool ProcessConfig(GSimProcess* pGammaSim){
     			pGammaSim->ResetNoiseE(fNoiseE);
     		}
     	}
+    	if(std::regex_search (line,m,rThread)){
+    		std::istringstream iss(line);
+    		if(!(iss >> strKeyWord)) bIfInputValid = false;
+    		if(!(iss >> nNumOfThreads)) bIfInputValid = false;
+    		if(nNumOfThreads >= 0){
+    			std::cout<<"Number of threads: "<< nNumOfThreads <<std::endl;
+    		}
+    	}
     	if(!bIfInputValid){
     		std::cout<<"Input file exception"<<std::endl;
     		return false;
@@ -95,9 +106,8 @@ bool ProcessConfig(GSimProcess* pGammaSim){
    	}
 	std::cout<< "Simulation time length " << fTime << "seconds." << std::endl;
 	
-	
 	//Multi thread
-	for(int nThread=0; nThread<2; nThread++){
+	for(int nThread=0; nThread<nNumOfThreads; nThread++){
 		std::priority_queue<GEvent*,
   		std::vector<GEvent *, std::allocator<GEvent*> >,
         GEventComparator> eventQueue;
@@ -125,14 +135,17 @@ int main(){
   	
   	//Multi thread
   	if(pGammaSim->vecGCuboid.size()>0){
-	  	pGammaSim->ThreadStartRun(0);
-	  	pGammaSim->ThreadStartRun(1);
-	  	pGammaSim->AddNewSpectrum(new GSpectra(1000, 1));
-	  	pGammaSim->AddNewSpectrum(new GSpectra(1000, 1));
+  		for(int i=0; i<nNumOfThreads; i++) pGammaSim->ThreadStartRun(i);
+	  	//pGammaSim->ThreadStartRun(0);
+	  	//pGammaSim->ThreadStartRun(1);
+	  	for(int i=0; i<nNumOfThreads; i++) pGammaSim->AddNewSpectrum(new GSpectra(1000, 1));
+	  	//pGammaSim->AddNewSpectrum(new GSpectra(1000, 1));
+	  	//pGammaSim->AddNewSpectrum(new GSpectra(1000, 1));
 	  	pGammaSim->ThreadWaitTillFinish();
 		//Wait for all the processes to finish, then output spectra
-  		pGammaSim->OutputSpectrum(0);
-  		pGammaSim->OutputSpectrum(1);
+		for(int i=0; i<nNumOfThreads; i++) pGammaSim->OutputSpectrum(i);
+  		//pGammaSim->OutputSpectrum(0);
+  		//pGammaSim->OutputSpectrum(1);
   	}
   	
   	//Some pointers will be released by the destructor of pGammaSim.
