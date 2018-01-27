@@ -71,7 +71,7 @@ bool ProcessConfig(GSimProcess* pGammaSim){
     		std::cout<<std::endl;
     		std::cout<<"Position: "<<x1<<" "<<y1<<" "<<z1<<" "<<x2<<" "<<y2<<" "<<z2<<" "<<std::endl;
     		pGammaSim->AddNewObject(new GCuboid(x1, y1, z1, x2, y2, z2, (nIsDetector>0)));
-    		if(nIsDetector) pGammaSim->AddNewSpectrum(new GSpectra(1000, 1));
+    		//if(nIsDetector) pGammaSim->AddNewSpectrum(new GSpectra(1000, 1));
     	}
     	if(std::regex_search (line,m,rNoiseE)){
     		std::istringstream iss(line);
@@ -108,38 +108,26 @@ int main(){
 	std::cout << "Configuring simulation settings ..." << std::endl;
 	
 	if(!ProcessConfig(pGammaSim)) return 0;
-	/*
-  	// Load queue with some number of initial emissions.
-  	double f_SourceE = 0.662;//Cs-137 source
-  	//double f_SourceE = 0.183;//Uranium line
-  	
-  	//Add a new point source
-  	pGammaSim->AddNewSource(new GPointSource(0.0,0.0,0.0, f_SourceE));
-  	//First: a detector
-  	pGammaSim->AddNewObject(new GCuboid(-1,-1,1, 1,1,2.5, true));
-  	//Second: a large block of CZT between the detector and the source.
-  	pGammaSim->AddNewObject(new GCuboid(-1,-1,0, 1,1,1, false));
-  	
-  	std::cout << "Starting to pump queue with events"<< std::endl;
-  	
-  	pGammaSim->PumpDecays(3E7);
-  	
-  	*/
   	
   	std::cout << "Start simulation" << std::endl;
   	// Run the simulation.
   	if(pGammaSim->vecGCuboid.size()>0){
 	  	//pGammaSim->Run();
-	  	pGammaSim->ThreadStartRun();
-	  	//thrSim_ = std::thread(&GSimProcess::Run, pGammaSim);
-	  	//if(thrSim_.joinable()) thrSim_.join();
-  		pGammaSim->OutputSpectrum();
+	  	pGammaSim->ThreadStartRun(1);
+	  	//pGammaSim->ThreadStartRun(1);
+	  	pGammaSim->AddNewSpectrum(new GSpectra(1000, 1));
+	  	pGammaSim->AddNewSpectrum(new GSpectra(1000, 1));
+	  	//pGammaSim->AddNewSpectrum(new GSpectra(1000, 1));
+	  	pGammaSim->ThreadWaitTillFinish();
+		//Wait for all the processes to finish, then output spectra
+  		pGammaSim->OutputSpectrum(1);
+  		//pGammaSim->OutputSpectrum(1);
   	}
-  	
-  	std::cout << "Simulation finished" << std::endl;
   	
   	//Some pointers will be released by the destructor of pGammaSim.
   	delete pGammaSim;
+  	
+  	std::cout << "Simulation finished" << std::endl;
   	
 	return 0;
 }

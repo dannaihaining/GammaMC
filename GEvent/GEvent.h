@@ -16,7 +16,7 @@ class GEvent{
   		time(t), x(fX), y(fY), z(fZ), E(fE){}
   	
   	// Execute event by invoking this method.
-  	virtual void ProcessEvent(GSimProcess* pGProc) = 0;
+  	virtual void ProcessEvent(GSimProcess* pGProc, int nThread) = 0;
   	const double time,x,y,z,E;
 };
 
@@ -35,7 +35,7 @@ class GEmission:public GEvent{
     	delete pPointSource;
 		delete pVector;
     }
-  	virtual void ProcessEvent(GSimProcess* pGProc);
+  	virtual void ProcessEvent(GSimProcess* pGProc, int nThread);
 	private:
 	GPointSource* pPointSource = nullptr;
 	//bool bScattered;
@@ -46,7 +46,7 @@ class GCompton:public GEvent{
 	public:
   	GCompton (double t, double fX, double fY, double fZ, double fE, bool IsInDetector=false)
     	: GEvent(t, fX, fY, fZ, fE), bInDetector(IsInDetector){}
-  	virtual void ProcessEvent(GSimProcess* pGProc);
+  	virtual void ProcessEvent(GSimProcess* pGProc, int nThread);
 	private:
   	const bool bInDetector;
 };
@@ -55,7 +55,7 @@ class GPhotoElec:public GEvent{
 	public:
   	GPhotoElec (double t, double fX, double fY, double fZ, double fE, bool IsInDetector=false)
     	: GEvent(t, fX, fY, fZ, fE), bInDetector(IsInDetector){}
-  	virtual void ProcessEvent(GSimProcess* pGProc);
+  	virtual void ProcessEvent(GSimProcess* pGProc, int nThread);
 	private:
   	const bool bInDetector;
 };
@@ -64,7 +64,7 @@ class GPairProd:public GEvent{
 	public:
   	GPairProd (double t, double fX, double fY, double fZ, double fE, bool IsInDetector=false)
     	:GEvent(t, fX, fY, fZ, fE), bInDetector(IsInDetector){}
-  	virtual void ProcessEvent(GSimProcess* pGProc);
+  	virtual void ProcessEvent(GSimProcess* pGProc, int nThread);
 	private:
   	const bool bInDetector;
 };

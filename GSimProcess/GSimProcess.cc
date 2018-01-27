@@ -2,12 +2,15 @@
 #include <iostream>
 #include <sstream>
 
-void GSimProcess::ThreadStartRun(){
-	thrSim_ = std::thread(&GSimProcess::Run, this);
-	if(thrSim_.joinable()) thrSim_.join();
+void GSimProcess::ThreadStartRun(int nThread){
+	vecThrSim_.push_back(std::thread(&GSimProcess::Run, this, nThread));
 }
 
-void GSimProcess::Run(){
+void GSimProcess::ThreadWaitTillFinish(){
+	for(unsigned int i=0; i<vecThrSim_.size(); ++i) if(vecThrSim_[i].joinable()) vecThrSim_[i].join();
+}
+
+void GSimProcess::Run(int nThread){
 	
 	///////////
 	//Progress bar
@@ -23,14 +26,15 @@ void GSimProcess::Run(){
   		GEvent * nextEvent = eventQueue.top();
    		eventQueue.pop();
    		time = nextEvent->time;
-   		nextEvent->ProcessEvent(this);
+   		nextEvent->ProcessEvent(this, nThread);
    		delete nextEvent;
    		
    		//Jiawei-Jan26: debug
-   		std::this_thread::sleep_for(std::chrono::microseconds(1));
+   		//std::this_thread::sleep_for(std::chrono::microseconds(1));
 		
    		///////////
 		//Progress bar
+		if(nThread>0) continue;
 		if(eventQueue.size()==0) break;
 		nProcessed ++;
 		nCt ++;
@@ -45,12 +49,12 @@ void GSimProcess::Run(){
         		else if (i == nProgPos) std::cout << ">";
         		else std::cout << " ";
     		}
-    		std::cout << "] " << int(fProgress * 100.0) << " %\r \n";
+    		std::cout << "] " << int(fProgress * 100.0) << " %\r";
     		std::cout.flush();
   			nCt=0;
   			
-  			//Update the spectrum every step
-  			this->OutputSpectrum();
+  			//Update the spectrum every 5 percent
+  			//this->OutputSpectrum(nThread);
   		}
   		//////////
    		
@@ -63,17 +67,15 @@ void GSimProcess::Run(){
 void GSimProcess::ScheduleEvent (GEvent * newEvent) {
    	eventQueue.push (newEvent);
 }
-void GSimProcess::OutputSpectrum(){
+void GSimProcess::OutputSpectrum(int nThread){
 	
 	//Declare a unique_lock object and lock the mutex object.
 	//Block the thread if the lock is owned by other threads.
-    std::unique_lock<std::mutex> lock(mx_);
+    //std::unique_lock<std::mutex> lock(mx_);
     
-	for(unsigned int i=0; i<vecGSpec.size(); i++){
-		std::ostringstream oss;
-		oss << "Spectrum_Detector" << i <<".txt";
-		vecGSpec[i]->Output(oss.str());
-	}
+	std::ostringstream oss;
+	oss << "Spectrum_Thread"<< nThread <<".txt";
+	vecGSpec[nThread]->Output(oss.str());
 }
 //Sort the objects based on whichever is first entered by the vector.
 void GSimProcess::ReOrderObjects(GVector* pVector){
@@ -98,6 +100,7 @@ void GSimProcess::AddNewObject(GCuboid* pGC){
 	vecGCuboid.push_back(pGC);
 }
 void GSimProcess::AddNewSpectrum(GSpectra* pSpec){
+	pSpec->Clear();
 	vecGSpec.push_back(pSpec);
 }
 void GSimProcess::PumpDecays(double fTime){
@@ -145,15 +148,15 @@ void GSimProcess::PumpDecays(double fTime){
 	}
 }
 
-void GSimProcess::Add2Spec(const double fE, int nDetectorNum, const bool bNoise){
+void GSimProcess::Add2Spec(const double fE, int nThread, const bool bNoise){
 	//fE unit: keV
 	//Declare a unique_lock object and lock the mutex object.
 	//Block the thread if the lock is owned by other threads.
-    std::unique_lock<std::mutex> lock(mx_);
+    //std::unique_lock<std::mutex> lock(mx_);
     
-	if(nDetectorNum>=vecGSpec.size()) nDetectorNum = 0;
-	if(!bNoise) vecGSpec[nDetectorNum]->AddOneEvent(fE);
-	else vecGSpec[nDetectorNum]->AddOneEvent(fE + pStatNoise->fGaussianSampler( 2.35*sqrt(fE * 0.005) ) + pElecNoise->fGaussianSampler( 1.4 ));
+	if(nThread>=vecGSpec.size()) nThread = 0;
+	if(!bNoise) vecGSpec[nThread]->AddOneEvent(fE);
+	else vecGSpec[nThread]->AddOneEvent(fE + pStatNoise->fGaussianSampler( 2.35*sqrt(fE * 0.005) ) + pElecNoise->fGaussianSampler( 1.4 ));
 }
 
 void GSimProcess::ResetNoiseE(const double fNoiseE){

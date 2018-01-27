@@ -32,7 +32,7 @@ class GSimProcess{
 	std::vector<GSpectra*> vecGSpec;
 	//GSpectra* pSpectrum;
 	
-  	std::thread thrSim_;
+  	std::vector<std::thread> vecThrSim_;
   	std::mutex mx_;
 	std::condition_variable cond_;
 	
@@ -60,18 +60,23 @@ class GSimProcess{
   		if(vecGCuboid.size()>0) vecGCuboid.erase(vecGCuboid.begin(), vecGCuboid.end());
   		for(unsigned int i=0; i<vecGPtSource.size(); i++) delete vecGPtSource[i];
   		if(vecGPtSource.size()>0) vecGPtSource.erase(vecGPtSource.begin(), vecGPtSource.end());
-  		for(unsigned int i=0; i<vecGSpec.size(); i++) delete vecGSpec[i];
+		
+  		for(unsigned int i=0; i<vecGSpec.size(); i++){
+  			//this->OutputSpectrum(i);
+  			delete vecGSpec[i];	
+  		}
   		if(vecGSpec.size()>0) vecGSpec.erase(vecGSpec.begin(), vecGSpec.end());
   		//delete pSpectrum;
   		if(!pStatNoise) delete pStatNoise;
   		if(!pElecNoise) delete pElecNoise;
   	}
   	void ReOrderObjects(GVector* pVector);
-  	void Run();
-  	void ThreadStartRun();
+  	void Run(int nThread);
+  	void ThreadStartRun(int nThread);
+  	void ThreadWaitTillFinish();
   	void ScheduleEvent (GEvent * newEvent);
-  	void OutputSpectrum();
-  	void Add2Spec(const double fE, int nDetectorNum=0, const bool bNoise = false);
+  	void OutputSpectrum(int nThread);
+  	void Add2Spec(const double fE, int nThread=0, const bool bNoise = false);
   	void AddNewSource(GPointSource* pPSource);
   	void AddNewObject(GCuboid* pGC);
   	void AddNewSpectrum(GSpectra* pSpec);

@@ -38,7 +38,7 @@ void GetAtten_All(double fE, double& fCS_C, double& fCS_P, double& fCS_E){
 //Attenuation coefficients
 double fCS_C, fCS_P, fCS_E;
 
-void GEmission::ProcessEvent(GSimProcess* pGProc){
+void GEmission::ProcessEvent(GSimProcess* pGProc, int nThread){
 	//GVector* pVector = pGProc->pPointSource->GenerateOneRay();
 	//The new ray should not be from the same point source, instead each emission should have its own "virtual" point source. (Consider a Compton scattering event)
 	//if(!bScattered) pVector = pPointSource->GenerateOneRay();
@@ -64,7 +64,7 @@ void GEmission::ProcessEvent(GSimProcess* pGProc){
 	}
 }
 
-void GCompton::ProcessEvent(GSimProcess* pGProc){
+void GCompton::ProcessEvent(GSimProcess* pGProc, int nThread){
 	double fX1, fY1, fZ1, fEs, fTheta, fPhi;
 	GRand::RandComptonAngle(E, fX1, fY1, fZ1, fEs, fTheta, fPhi, 0);
   	if(fEs > E_THR){
@@ -75,16 +75,16 @@ void GCompton::ProcessEvent(GSimProcess* pGProc){
   		//pGProc->ScheduleEvent(new GEmission(time, x, y, z, fEs, bInDetector, true, pVector));
   		pGProc->ScheduleEvent(new GEmission(time, x, y, z, fEs, pVector));
   		//For now I assuemd all objects are detectors. I need to use a flag to mark some materials as non-detectors.
-  		if(bInDetector) pGProc->Add2Spec(1000*(E-fEs), 0, true);
+  		if(bInDetector) pGProc->Add2Spec(1000*(E-fEs), nThread, true);
   	}
-  	else if(bInDetector) pGProc->Add2Spec(1000*E, 0, true);
+  	else if(bInDetector) pGProc->Add2Spec(1000*E, nThread, true);
 }
 
-void GPhotoElec::ProcessEvent(GSimProcess* pGProc){
-	if(bInDetector) pGProc->Add2Spec(1000*E, 0, true);
+void GPhotoElec::ProcessEvent(GSimProcess* pGProc, int nThread){
+	if(bInDetector) pGProc->Add2Spec(1000*E, nThread, true);
 }
 
-void GPairProd::ProcessEvent(GSimProcess* pGProc){
+void GPairProd::ProcessEvent(GSimProcess* pGProc, int nThread){
 	
 }
 
