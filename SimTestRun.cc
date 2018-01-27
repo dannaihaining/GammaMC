@@ -15,8 +15,6 @@
 #include <string>
 #include <regex>
 
-
-
 bool ProcessConfig(GSimProcess* pGammaSim){
 	std::ifstream infile("../Settings.ini");//No need to release the memory manually this way
 	std::string line;
@@ -71,7 +69,6 @@ bool ProcessConfig(GSimProcess* pGammaSim){
     		std::cout<<std::endl;
     		std::cout<<"Position: "<<x1<<" "<<y1<<" "<<z1<<" "<<x2<<" "<<y2<<" "<<z2<<" "<<std::endl;
     		pGammaSim->AddNewObject(new GCuboid(x1, y1, z1, x2, y2, z2, (nIsDetector>0)));
-    		//if(nIsDetector) pGammaSim->AddNewSpectrum(new GSpectra(1000, 1));
     	}
     	if(std::regex_search (line,m,rNoiseE)){
     		std::istringstream iss(line);
@@ -97,7 +94,19 @@ bool ProcessConfig(GSimProcess* pGammaSim){
     	return false;
    	}
 	std::cout<< "Simulation time length " << fTime << "seconds." << std::endl;
-	pGammaSim->PumpDecays(fTime);
+	
+	
+	//Multi thread
+	for(int nThread=0; nThread<2; nThread++){
+		std::priority_queue<GEvent*,
+  		std::vector<GEvent *, std::allocator<GEvent*> >,
+        GEventComparator> eventQueue;
+        pGammaSim->vec_EventQueue.push_back(eventQueue);
+        pGammaSim->PumpDecays(fTime, nThread);
+	}
+	//pGammaSim->PumpDecays(fTime, 0);
+	//pGammaSim->PumpDecays(fTime, 1);
+	
 	return true;
 }
 
@@ -111,23 +120,29 @@ int main(){
   	
   	std::cout << "Start simulation" << std::endl;
   	// Run the simulation.
+  	
+  	auto start = std::chrono::high_resolution_clock::now();
+  	
+  	//Multi thread
   	if(pGammaSim->vecGCuboid.size()>0){
-	  	//pGammaSim->Run();
+	  	pGammaSim->ThreadStartRun(0);
 	  	pGammaSim->ThreadStartRun(1);
-	  	//pGammaSim->ThreadStartRun(1);
 	  	pGammaSim->AddNewSpectrum(new GSpectra(1000, 1));
 	  	pGammaSim->AddNewSpectrum(new GSpectra(1000, 1));
-	  	//pGammaSim->AddNewSpectrum(new GSpectra(1000, 1));
 	  	pGammaSim->ThreadWaitTillFinish();
 		//Wait for all the processes to finish, then output spectra
+  		pGammaSim->OutputSpectrum(0);
   		pGammaSim->OutputSpectrum(1);
-  		//pGammaSim->OutputSpectrum(1);
   	}
   	
   	//Some pointers will be released by the destructor of pGammaSim.
   	delete pGammaSim;
   	
   	std::cout << "Simulation finished" << std::endl;
+  	
+  	auto finish = std::chrono::high_resolution_clock::now();
+	std::chrono::duration<double> elapsed = finish - start;
+	std::cout<<"Elapsed time "<< elapsed.count() << "S" <<std::endl;
   	
 	return 0;
 }

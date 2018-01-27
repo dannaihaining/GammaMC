@@ -44,6 +44,9 @@ void GEmission::ProcessEvent(GSimProcess* pGProc, int nThread){
 	//if(!bScattered) pVector = pPointSource->GenerateOneRay();
 	GetAtten_All(E, fCS_C, fCS_P, fCS_E);
 	pGProc->ReOrderObjects(pVector);
+	
+	//Debug
+   	//if(nThread>0) return;
 	double fT1, fT2, fX, fY, fZ;
 	for(int i=0; i<pGProc->vecGCuboid.size(); i++){
 		if(pGProc->vecGCuboid[i]->IfCollide(pVector, fT1, fT2)){
@@ -52,11 +55,11 @@ void GEmission::ProcessEvent(GSimProcess* pGProc, int nThread){
   				double fTemp = GRand::RandDouble(0.0, fCS_C+fCS_P+fCS_E);
   				pVector->PointOnThis(fZTemp, fX, fY, fZ);
   				if(fTemp <= fCS_C){
-  					pGProc->ScheduleEvent(new GCompton(time + fZTemp*Z2T_COEFF, fX, fY, fZ, E, pGProc->vecGCuboid[i]->IsDetector()));
+  					pGProc->ScheduleEvent(new GCompton(time + fZTemp*Z2T_COEFF, fX, fY, fZ, E, pGProc->vecGCuboid[i]->IsDetector()), nThread);
   				}
   				else if(fTemp <= fCS_C + fCS_P){}
   				else{
-  					pGProc->ScheduleEvent(new GPhotoElec(time + fZTemp*Z2T_COEFF, fX, fY, fZ, E, pGProc->vecGCuboid[i]->IsDetector()));
+  					pGProc->ScheduleEvent(new GPhotoElec(time + fZTemp*Z2T_COEFF, fX, fY, fZ, E, pGProc->vecGCuboid[i]->IsDetector()), nThread);
   				}
   				break;
   			}
@@ -73,7 +76,7 @@ void GCompton::ProcessEvent(GSimProcess* pGProc, int nThread){
   		//The direction of the "virtual" emission is sampled here and the pointer is deleted in ~GEmission().
   		GVector* pVector = new GVector(x, y, z, fX1, fY1, fZ1);
   		//pGProc->ScheduleEvent(new GEmission(time, x, y, z, fEs, bInDetector, true, pVector));
-  		pGProc->ScheduleEvent(new GEmission(time, x, y, z, fEs, pVector));
+  		pGProc->ScheduleEvent(new GEmission(time, x, y, z, fEs, pVector), nThread);
   		//For now I assuemd all objects are detectors. I need to use a flag to mark some materials as non-detectors.
   		if(bInDetector) pGProc->Add2Spec(1000*(E-fEs), nThread, true);
   	}

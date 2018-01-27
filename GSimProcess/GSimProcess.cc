@@ -14,7 +14,8 @@ void GSimProcess::Run(int nThread){
 	
 	///////////
 	//Progress bar
-	int nMaxSize = eventQueue.size();
+	//int nMaxSize = eventQueue.size();
+	int nMaxSize = vec_EventQueue[nThread].size();
 	int nProcessed = 0;
 	int nBarWidth = 70;
   	int nProgPos = 0.0;
@@ -22,23 +23,26 @@ void GSimProcess::Run(int nThread){
   	int nCt = 0.0;
 	////////////////
 	
+	/*
 	while (!eventQueue.empty()){
   		GEvent * nextEvent = eventQueue.top();
-   		eventQueue.pop();
+   		eventQueue.pop();*/
+   	while (!vec_EventQueue[nThread].empty()){
+  		GEvent * nextEvent = vec_EventQueue[nThread].top();
+   		vec_EventQueue[nThread].pop();
    		time = nextEvent->time;
    		nextEvent->ProcessEvent(this, nThread);
    		delete nextEvent;
    		
-   		//Jiawei-Jan26: debug
-   		//std::this_thread::sleep_for(std::chrono::microseconds(1));
-		
    		///////////
 		//Progress bar
 		if(nThread>0) continue;
-		if(eventQueue.size()==0) break;
+		//if(eventQueue.size()==0) break;
+		if(vec_EventQueue[nThread].size()==0) break;
 		nProcessed ++;
 		nCt ++;
-		if(eventQueue.size()>nMaxSize) nMaxSize = eventQueue.size();
+		//if(eventQueue.size()>nMaxSize) nMaxSize = eventQueue.size();
+		if(vec_EventQueue[nThread].size()>nMaxSize) nMaxSize = vec_EventQueue[nThread].size();
   		fProgress = (double)nProcessed/nMaxSize;
   		if(fProgress>1.0) fProgress = 1.0;
   		if((double)nCt/nMaxSize>0.05){
@@ -64,14 +68,16 @@ void GSimProcess::Run(int nThread){
 	std::cout << std::endl;
 	/////////////
 }
-void GSimProcess::ScheduleEvent (GEvent * newEvent) {
-   	eventQueue.push (newEvent);
+void GSimProcess::ScheduleEvent (GEvent * newEvent, int nThread) {
+   	//eventQueue.push (newEvent);
+   	if(nThread>=vec_EventQueue.size()) nThread = 0;
+   	vec_EventQueue[nThread].push (newEvent);
 }
 void GSimProcess::OutputSpectrum(int nThread){
 	
 	//Declare a unique_lock object and lock the mutex object.
 	//Block the thread if the lock is owned by other threads.
-    //std::unique_lock<std::mutex> lock(mx_);
+    std::unique_lock<std::mutex> lock(mx_);
     
 	std::ostringstream oss;
 	oss << "Spectrum_Thread"<< nThread <<".txt";
@@ -79,6 +85,10 @@ void GSimProcess::OutputSpectrum(int nThread){
 }
 //Sort the objects based on whichever is first entered by the vector.
 void GSimProcess::ReOrderObjects(GVector* pVector){
+	//Declare a unique_lock object and lock the mutex object.
+	//Block the thread if the lock is owned by other threads.
+    std::unique_lock<std::mutex> lock(mx_);
+    
 	std::vector<std::pair<double, GCuboid*>> pPairVec;
 	double fT1, fT2;
 	for(unsigned int i=0; i<vecGCuboid.size(); i++){
@@ -103,7 +113,7 @@ void GSimProcess::AddNewSpectrum(GSpectra* pSpec){
 	pSpec->Clear();
 	vecGSpec.push_back(pSpec);
 }
-void GSimProcess::PumpDecays(double fTime){
+void GSimProcess::PumpDecays(double fTime, int nThread){
 	//double fActivity = 1;//1 uCi activity
   	double t=0.0;
   	double tTemp;
@@ -124,7 +134,7 @@ void GSimProcess::PumpDecays(double fTime){
     		if(!GRand::RandTime2Decay(vecGPtSource[i]->fActivity, tTemp)) break;
     		t+=tTemp;
     		GVector* pVector = vecGPtSource[i]->GenerateOneRay();
-  			ScheduleEvent(new GEmission(t,0.0,0.0,0.0, vecGPtSource[i]->fEnergy, pVector));
+  			ScheduleEvent(new GEmission(t,0.0,0.0,0.0, vecGPtSource[i]->fEnergy, pVector), nThread);
 
 			///////////
 			//Progress bar
@@ -152,7 +162,7 @@ void GSimProcess::Add2Spec(const double fE, int nThread, const bool bNoise){
 	//fE unit: keV
 	//Declare a unique_lock object and lock the mutex object.
 	//Block the thread if the lock is owned by other threads.
-    //std::unique_lock<std::mutex> lock(mx_);
+    std::unique_lock<std::mutex> lock(mx_);
     
 	if(nThread>=vecGSpec.size()) nThread = 0;
 	if(!bNoise) vecGSpec[nThread]->AddOneEvent(fE);
