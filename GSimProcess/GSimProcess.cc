@@ -26,6 +26,8 @@ void GSimProcess::Run(){
    		nextEvent->ProcessEvent(this);
    		delete nextEvent;
    		
+   		//Jiawei-Jan26: debug
+   		std::this_thread::sleep_for(std::chrono::microseconds(1));
 		
    		///////////
 		//Progress bar
@@ -43,9 +45,12 @@ void GSimProcess::Run(){
         		else if (i == nProgPos) std::cout << ">";
         		else std::cout << " ";
     		}
-    		std::cout << "] " << int(fProgress * 100.0) << " %\r";
+    		std::cout << "] " << int(fProgress * 100.0) << " %\r \n";
     		std::cout.flush();
   			nCt=0;
+  			
+  			//Update the spectrum every step
+  			this->OutputSpectrum();
   		}
   		//////////
    		
@@ -59,6 +64,11 @@ void GSimProcess::ScheduleEvent (GEvent * newEvent) {
    	eventQueue.push (newEvent);
 }
 void GSimProcess::OutputSpectrum(){
+	
+	//Declare a unique_lock object and lock the mutex object.
+	//Block the thread if the lock is owned by other threads.
+    std::unique_lock<std::mutex> lock(mx_);
+    
 	for(unsigned int i=0; i<vecGSpec.size(); i++){
 		std::ostringstream oss;
 		oss << "Spectrum_Detector" << i <<".txt";
@@ -137,6 +147,10 @@ void GSimProcess::PumpDecays(double fTime){
 
 void GSimProcess::Add2Spec(const double fE, int nDetectorNum, const bool bNoise){
 	//fE unit: keV
+	//Declare a unique_lock object and lock the mutex object.
+	//Block the thread if the lock is owned by other threads.
+    std::unique_lock<std::mutex> lock(mx_);
+    
 	if(nDetectorNum>=vecGSpec.size()) nDetectorNum = 0;
 	if(!bNoise) vecGSpec[nDetectorNum]->AddOneEvent(fE);
 	else vecGSpec[nDetectorNum]->AddOneEvent(fE + pStatNoise->fGaussianSampler( 2.35*sqrt(fE * 0.005) ) + pElecNoise->fGaussianSampler( 1.4 ));

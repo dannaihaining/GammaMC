@@ -8,6 +8,8 @@
 #include <thread>
 #include <math.h>
 #include <thread>         // std::thread, std::this_thread::sleep_for
+#include <mutex>
+#include <condition_variable>
 #include "../GEvent/GEvent.h"
 #include "../GSpectra/GSpectra.h"
 #include "../GGeometry/GCuboid.h"
@@ -29,8 +31,11 @@ class GSimProcess{
   	GNoise* pElecNoise = nullptr;
 	std::vector<GSpectra*> vecGSpec;
 	//GSpectra* pSpectrum;
+	
   	std::thread thrSim_;
-  	
+  	std::mutex mx_;
+	std::condition_variable cond_;
+	
 	protected:
   	std::priority_queue<GEvent*,
   		std::vector<GEvent *, std::allocator<GEvent*> >,

@@ -79,7 +79,7 @@ bool ProcessConfig(GSimProcess* pGammaSim){
     		double fNoiseE;
     		if(!(iss >> fNoiseE)) bIfInputValid = false;
     		if(fNoiseE >= 0.0){
-    			std::cout<<"Setting electronic noise"<<std::endl;
+    			std::cout<<"Setting electronic noise: "<< fNoiseE << "keV" <<std::endl;
     			pGammaSim->ResetNoiseE(fNoiseE);
     		}
     	}
