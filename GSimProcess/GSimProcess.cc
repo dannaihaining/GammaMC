@@ -142,6 +142,11 @@ void GSimProcess::Add2Spec(const double fE, int nDetectorNum, const bool bNoise)
 	else vecGSpec[nDetectorNum]->AddOneEvent(fE + pStatNoise->fGaussianSampler( 2.35*sqrt(fE * 0.005) ) + pElecNoise->fGaussianSampler( 1.4 ));
 }
 
+void GSimProcess::ResetNoiseE(const double fNoiseE){
+	delete pElecNoise;
+	pElecNoise = new GNoise(fNoiseE, 0.0);
+}
+
 bool GSimProcess::ObjectConstraintTest(){
 	std::cout<< "Testing" <<std::endl;
 	if(vecGCuboid.size() <= 1) return true;

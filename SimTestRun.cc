@@ -26,6 +26,7 @@ bool ProcessConfig(GSimProcess* pGammaSim){
     std::regex rTime ("^SIM_TIME");
     std::regex rPointSouce ("^SOURCE_POINT");
     std::regex rCuboidObject ("^OBJ_CUBOID");
+    std::regex rNoiseE ("^NOISE_E");
     std::smatch m;
     std::string strKeyWord;
     
@@ -71,6 +72,16 @@ bool ProcessConfig(GSimProcess* pGammaSim){
     		std::cout<<"Position: "<<x1<<" "<<y1<<" "<<z1<<" "<<x2<<" "<<y2<<" "<<z2<<" "<<std::endl;
     		pGammaSim->AddNewObject(new GCuboid(x1, y1, z1, x2, y2, z2, (nIsDetector>0)));
     		if(nIsDetector) pGammaSim->AddNewSpectrum(new GSpectra(1000, 1));
+    	}
+    	if(std::regex_search (line,m,rNoiseE)){
+    		std::istringstream iss(line);
+    		if(!(iss >> strKeyWord)) bIfInputValid = false;
+    		double fNoiseE;
+    		if(!(iss >> fNoiseE)) bIfInputValid = false;
+    		if(fNoiseE >= 0.0){
+    			std::cout<<"Setting electronic noise"<<std::endl;
+    			pGammaSim->ResetNoiseE(fNoiseE);
+    		}
     	}
     	if(!bIfInputValid){
     		std::cout<<"Input file exception"<<std::endl;
