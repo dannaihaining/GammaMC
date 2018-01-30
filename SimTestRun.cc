@@ -35,6 +35,30 @@ bool ProcessConfig(GSimProcess* pGammaSim){
 	
 	double fTime = 0.0;
 	
+	//Use the first iteraction to parse the thread number only, so no specific orders are needed in the Settings.ini file!
+	while (std::getline(infile, line)){
+		if(std::regex_search (line,m,rThread)){
+    		std::istringstream iss(line);
+    		if(!(iss >> strKeyWord)) bIfInputValid = false;
+    		if(!(iss >> nNumOfThreads)) bIfInputValid = false;
+    		if(nNumOfThreads == 0) bIfInputValid = false;
+    		if(nNumOfThreads > 0){
+    			std::cout<<"Number of threads: "<< nNumOfThreads <<std::endl;
+    			for(int i=0; i<nNumOfThreads; ++i){
+    				std::vector<GCuboid*> tempVec;
+    				pGammaSim->vecGCuboid.push_back(tempVec);
+    			}
+    		}
+    		break;
+    	}
+    	if(!bIfInputValid){
+    		std::cout<<"Input file exception"<<std::endl;
+    		return false;
+    	}
+	}
+	
+	infile.close();
+	infile.open("../Settings.ini");
 	
 	while (std::getline(infile, line))
 	{
@@ -83,6 +107,7 @@ bool ProcessConfig(GSimProcess* pGammaSim){
     			pGammaSim->ResetNoiseE(fNoiseE);
     		}
     	}
+    	/*
     	if(std::regex_search (line,m,rThread)){
     		std::istringstream iss(line);
     		if(!(iss >> strKeyWord)) bIfInputValid = false;
@@ -95,6 +120,7 @@ bool ProcessConfig(GSimProcess* pGammaSim){
     			}
     		}
     	}
+    	*/
     	if(!bIfInputValid){
     		std::cout<<"Input file exception"<<std::endl;
     		return false;

@@ -181,8 +181,6 @@ void GSimProcess::ResetNoiseE(const double fNoiseE){
 
 bool GSimProcess::ObjectConstraintTest(){
 	std::cout<< "Testing objects constraints ..." <<std::endl;
-	//if(vecGCuboid.size()==0) return false;
-	std::cout<< vecGCuboid[0].size() <<std::endl;
 	if(vecGCuboid[0].size() <= 1){
 		return true;
 	}
