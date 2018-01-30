@@ -43,23 +43,23 @@ void GEmission::ProcessEvent(GSimProcess* pGProc, int nThread){
 	//The new ray should not be from the same point source, instead each emission should have its own "virtual" point source. (Consider a Compton scattering event)
 	//if(!bScattered) pVector = pPointSource->GenerateOneRay();
 	GetAtten_All(E, fCS_C, fCS_P, fCS_E);
-	pGProc->ReOrderObjects(pVector);
+	pGProc->ReOrderObjects(pVector, nThread);
 	
 	//Debug
    	//if(nThread>0) return;
 	double fT1, fT2, fX, fY, fZ;
-	for(int i=0; i<pGProc->vecGCuboid.size(); i++){
-		if(pGProc->vecGCuboid[i]->IfCollide(pVector, fT1, fT2)){
+	for(int i=0; i<pGProc->vecGCuboid[nThread].size(); i++){
+		if(pGProc->vecGCuboid[nThread][i]->IfCollide(pVector, fT1, fT2)){
 			double fZTemp;
   			if(GRand::RandInteractionDepth(fCS_C + fCS_P + fCS_E, fZTemp, 1*(fT2 - fT1))){
   				double fTemp = GRand::RandDouble(0.0, fCS_C+fCS_P+fCS_E);
   				pVector->PointOnThis(fZTemp, fX, fY, fZ);
   				if(fTemp <= fCS_C){
-  					pGProc->ScheduleEvent(new GCompton(time + fZTemp*Z2T_COEFF, fX, fY, fZ, E, pGProc->vecGCuboid[i]->IsDetector()), nThread);
+  					pGProc->ScheduleEvent(new GCompton(time + fZTemp*Z2T_COEFF, fX, fY, fZ, E, pGProc->vecGCuboid[nThread][i]->IsDetector()), nThread);
   				}
   				else if(fTemp <= fCS_C + fCS_P){}
   				else{
-  					pGProc->ScheduleEvent(new GPhotoElec(time + fZTemp*Z2T_COEFF, fX, fY, fZ, E, pGProc->vecGCuboid[i]->IsDetector()), nThread);
+  					pGProc->ScheduleEvent(new GPhotoElec(time + fZTemp*Z2T_COEFF, fX, fY, fZ, E, pGProc->vecGCuboid[nThread][i]->IsDetector()), nThread);
   				}
   				break;
   			}

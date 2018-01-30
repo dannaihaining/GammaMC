@@ -51,22 +51,24 @@ class GSimProcess{
 	
 		
   	std::vector<GPointSource*> vecGPtSource;
-  	std::vector<GCuboid*> vecGCuboid;
+  	//I use a separate vector of Objects because different threads sorting seem to cause significant overhead.
+  	std::vector<std::vector<GCuboid*>> vecGCuboid;
+  	//std::vector<GCuboid*> vecGCuboid;
   	//GSimProcess():time(0.0),eventQueue(){
   	GSimProcess():time(0.0),vec_EventQueue(){
   		//pSpectrum = new GSpectra(1000, 1);
   		pStatNoise = new GNoise(0.1, 0.0);
   		pElecNoise = new GNoise(1.0, 0.0);
-  		/*
-  		//First: a detector
-  		vecGCuboid.push_back(new GCuboid(-1,-1,1, 1,1,2.5, true));
-  		//Second: a large block of CZT between the detector and the source.
-  		vecGCuboid.push_back(new GCuboid(-1,-1,0, 1,1,1, false));
-  		*/
   	}
   	~GSimProcess(){
-  		for(unsigned int i=0; i<vecGCuboid.size(); i++) delete vecGCuboid[i];
+  		for(unsigned int j=0; j<vecGCuboid.size(); ++j){
+  			for(unsigned int i=0; i<vecGCuboid[j].size(); i++) delete vecGCuboid[j][i];
+  			if(vecGCuboid[j].size()>0) vecGCuboid[j].erase(vecGCuboid[j].begin(), vecGCuboid[j].end());
+  		}
   		if(vecGCuboid.size()>0) vecGCuboid.erase(vecGCuboid.begin(), vecGCuboid.end());
+  		
+  		//for(unsigned int i=0; i<vecGCuboid.size(); i++) delete vecGCuboid[i];
+  		//if(vecGCuboid.size()>0) vecGCuboid.erase(vecGCuboid.begin(), vecGCuboid.end());
   		for(unsigned int i=0; i<vecGPtSource.size(); i++) delete vecGPtSource[i];
   		if(vecGPtSource.size()>0) vecGPtSource.erase(vecGPtSource.begin(), vecGPtSource.end());
 		
@@ -79,7 +81,8 @@ class GSimProcess{
   		if(!pStatNoise) delete pStatNoise;
   		if(!pElecNoise) delete pElecNoise;
   	}
-  	void ReOrderObjects(GVector* pVector);
+  	//void ReOrderObjects(GVector* pVector);
+  	void ReOrderObjects(GVector* pVector, int nThread);
   	void Run(int nThread);
   	void ThreadStartRun(int nThread);
   	void ThreadWaitTillFinish();

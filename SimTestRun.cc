@@ -89,6 +89,10 @@ bool ProcessConfig(GSimProcess* pGammaSim){
     		if(!(iss >> nNumOfThreads)) bIfInputValid = false;
     		if(nNumOfThreads >= 0){
     			std::cout<<"Number of threads: "<< nNumOfThreads <<std::endl;
+    			for(int i=0; i<nNumOfThreads; ++i){
+    				std::vector<GCuboid*> tempVec;
+    				pGammaSim->vecGCuboid.push_back(tempVec);
+    			}
     		}
     	}
     	if(!bIfInputValid){

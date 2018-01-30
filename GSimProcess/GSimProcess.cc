@@ -84,30 +84,35 @@ void GSimProcess::OutputSpectrum(int nThread){
 	vecGSpec[nThread]->Output(oss.str());
 }
 //Sort the objects based on whichever is first entered by the vector.
-void GSimProcess::ReOrderObjects(GVector* pVector){
-	//Declare a unique_lock object and lock the mutex object.
-	//Block the thread if the lock is owned by other threads.
-    std::unique_lock<std::mutex> lock(mx_);
+void GSimProcess::ReOrderObjects(GVector* pVector, int nThread){
     
 	std::vector<std::pair<double, GCuboid*>> pPairVec;
 	double fT1, fT2;
-	for(unsigned int i=0; i<vecGCuboid.size(); i++){
-		if(vecGCuboid[i]->IfCollide(pVector, fT1, fT2)){
-			pPairVec.push_back(std::make_pair(fT1, vecGCuboid[i]));
+	
+	//Declare a unique_lock object and lock the mutex object.
+	//Block the thread if the lock is owned by other threads.
+    //std::unique_lock<std::mutex> lock(mx_);
+	
+	for(unsigned int i=0; i<vecGCuboid[nThread].size(); i++){
+		if(vecGCuboid[nThread][i]->IfCollide(pVector, fT1, fT2)){
+			pPairVec.push_back(std::make_pair(fT1, vecGCuboid[nThread][i]));
 		}
 		else{
-			pPairVec.push_back(std::make_pair(std::numeric_limits<double>::max(), vecGCuboid[i]));
+			pPairVec.push_back(std::make_pair(std::numeric_limits<double>::max(), vecGCuboid[nThread][i]));
 		}	
 	}
 	sort(pPairVec.begin(), pPairVec.end());
-	for(int i=0; i<vecGCuboid.size(); i++)
-		vecGCuboid[i] = pPairVec[i].second;
+	for(int i=0; i<vecGCuboid[nThread].size(); i++)
+		vecGCuboid[nThread][i] = pPairVec[i].second;
+	
+	//lock.unlock();
 }
 void GSimProcess::AddNewSource(GPointSource* pPSource){
 	vecGPtSource.push_back(pPSource);
 }
 void GSimProcess::AddNewObject(GCuboid* pGC){
-	vecGCuboid.push_back(pGC);
+	for(int i=0; i<vecGCuboid.size(); ++i) vecGCuboid[i].push_back(pGC);
+	//vecGCuboid.push_back(pGC);
 }
 void GSimProcess::AddNewSpectrum(GSpectra* pSpec){
 	pSpec->Clear();
@@ -175,37 +180,41 @@ void GSimProcess::ResetNoiseE(const double fNoiseE){
 }
 
 bool GSimProcess::ObjectConstraintTest(){
-	std::cout<< "Testing" <<std::endl;
-	if(vecGCuboid.size() <= 1) return true;
+	std::cout<< "Testing objects constraints ..." <<std::endl;
+	//if(vecGCuboid.size()==0) return false;
+	std::cout<< vecGCuboid[0].size() <<std::endl;
+	if(vecGCuboid[0].size() <= 1){
+		return true;
+	}
 	else{
-		for(int i=0; i<vecGCuboid.size(); i++){
-			for(int j=0; j<vecGCuboid.size(); j++){
+		for(int i=0; i<vecGCuboid[0].size(); i++){
+			for(int j=0; j<vecGCuboid[0].size(); j++){
 				if(i==j) continue;
-				double P1[2] = {vecGCuboid[i]->bl.x, vecGCuboid[i]->tr.x};
-				double P2[2] = {vecGCuboid[i]->bl.y, vecGCuboid[i]->tr.y}; 
-				double P3[2] = {vecGCuboid[i]->bl.z, vecGCuboid[i]->tr.z};
-				if((P1[0]/2+P1[1]/2-vecGCuboid[j]->bl.x)*(P1[0]/2+P1[1]/2-vecGCuboid[j]->tr.x)<0 &&
-					(P2[0]/2+P2[1]/2-vecGCuboid[j]->bl.y)*(P2[0]/2+P2[1]/2-vecGCuboid[j]->tr.y)<0 &&
-					(P3[0]/2+P3[1]/2-vecGCuboid[j]->bl.z)*(P3[0]/2+P3[1]/2-vecGCuboid[j]->tr.z)<0) return false;
+				double P1[2] = {vecGCuboid[0][i]->bl.x, vecGCuboid[0][i]->tr.x};
+				double P2[2] = {vecGCuboid[0][i]->bl.y, vecGCuboid[0][i]->tr.y}; 
+				double P3[2] = {vecGCuboid[0][i]->bl.z, vecGCuboid[0][i]->tr.z};
+				if((P1[0]/2+P1[1]/2-vecGCuboid[0][j]->bl.x)*(P1[0]/2+P1[1]/2-vecGCuboid[0][j]->tr.x)<0 &&
+					(P2[0]/2+P2[1]/2-vecGCuboid[0][j]->bl.y)*(P2[0]/2+P2[1]/2-vecGCuboid[0][j]->tr.y)<0 &&
+					(P3[0]/2+P3[1]/2-vecGCuboid[0][j]->bl.z)*(P3[0]/2+P3[1]/2-vecGCuboid[0][j]->tr.z)<0) return false;
 				for(int l=0; l<2; l++){
 					for(int m=0; m<2; m++){
 						for(int n=0; n<2; n++){
-							if((P1[l]-vecGCuboid[j]->bl.x)*(P1[l]-vecGCuboid[j]->tr.x)<0 &&
-							(P2[m]-vecGCuboid[j]->bl.y)*(P2[m]-vecGCuboid[j]->tr.y)<0 &&
-							(P3[n]-vecGCuboid[j]->bl.z)*(P3[n]-vecGCuboid[j]->tr.z)<0) return false;
+							if((P1[l]-vecGCuboid[0][j]->bl.x)*(P1[l]-vecGCuboid[0][j]->tr.x)<0 &&
+							(P2[m]-vecGCuboid[0][j]->bl.y)*(P2[m]-vecGCuboid[0][j]->tr.y)<0 &&
+							(P3[n]-vecGCuboid[0][j]->bl.z)*(P3[n]-vecGCuboid[0][j]->tr.z)<0) return false;
 						}
 					}
 				}
 				for(int l=0; l<2; l++){
-					if((P1[l]-vecGCuboid[j]->bl.x)*(P1[l]-vecGCuboid[j]->tr.x)<0 &&
-					(P2[0]/2+P2[1]/2-vecGCuboid[j]->bl.y)*(P2[0]/2+P2[1]/2-vecGCuboid[j]->tr.y)<0 &&
-					(P3[0]/2+P3[1]/2-vecGCuboid[j]->bl.z)*(P3[0]/2+P3[1]/2-vecGCuboid[j]->tr.z)<0) return false;
-					if((P2[l]-vecGCuboid[j]->bl.x)*(P2[l]-vecGCuboid[j]->tr.x)<0 &&
-					(P1[0]/2+P1[1]/2-vecGCuboid[j]->bl.y)*(P1[0]/2+P1[1]/2-vecGCuboid[j]->tr.y)<0 &&
-					(P3[0]/2+P3[1]/2-vecGCuboid[j]->bl.z)*(P3[0]/2+P3[1]/2-vecGCuboid[j]->tr.z)<0) return false;
-					if((P3[l]-vecGCuboid[j]->bl.x)*(P3[l]-vecGCuboid[j]->tr.x)<0 &&
-					(P2[0]/2+P2[1]/2-vecGCuboid[j]->bl.y)*(P2[0]/2+P2[1]/2-vecGCuboid[j]->tr.y)<0 &&
-					(P1[0]/2+P1[1]/2-vecGCuboid[j]->bl.z)*(P1[0]/2+P1[1]/2-vecGCuboid[j]->tr.z)<0) return false;
+					if((P1[l]-vecGCuboid[0][j]->bl.x)*(P1[l]-vecGCuboid[0][j]->tr.x)<0 &&
+					(P2[0]/2+P2[1]/2-vecGCuboid[0][j]->bl.y)*(P2[0]/2+P2[1]/2-vecGCuboid[0][j]->tr.y)<0 &&
+					(P3[0]/2+P3[1]/2-vecGCuboid[0][j]->bl.z)*(P3[0]/2+P3[1]/2-vecGCuboid[0][j]->tr.z)<0) return false;
+					if((P2[l]-vecGCuboid[0][j]->bl.x)*(P2[l]-vecGCuboid[0][j]->tr.x)<0 &&
+					(P1[0]/2+P1[1]/2-vecGCuboid[0][j]->bl.y)*(P1[0]/2+P1[1]/2-vecGCuboid[0][j]->tr.y)<0 &&
+					(P3[0]/2+P3[1]/2-vecGCuboid[0][j]->bl.z)*(P3[0]/2+P3[1]/2-vecGCuboid[0][j]->tr.z)<0) return false;
+					if((P3[l]-vecGCuboid[0][j]->bl.x)*(P3[l]-vecGCuboid[0][j]->tr.x)<0 &&
+					(P2[0]/2+P2[1]/2-vecGCuboid[0][j]->bl.y)*(P2[0]/2+P2[1]/2-vecGCuboid[0][j]->tr.y)<0 &&
+					(P1[0]/2+P1[1]/2-vecGCuboid[0][j]->bl.z)*(P1[0]/2+P1[1]/2-vecGCuboid[0][j]->tr.z)<0) return false;
 				}
 			}
 		}
