@@ -18,7 +18,7 @@
 int nNumOfThreads = 1;
 
 bool ProcessConfig(GSimProcess* pGammaSim){
-	std::ifstream infile("../Settings.ini");//No need to release the memory manually this way
+	std::ifstream infile("Settings.ini");//No need to release the memory manually this way
 	std::string line;
 	
     std::regex rComment ("^#");

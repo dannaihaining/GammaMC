@@ -7,6 +7,9 @@ set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pthread")
 # Pronect name
 project (GSimTestRun)
 
+# configure_file(Settings.ini ${PROJECT_BINARY_DIR}/Settings.ini COPYONLY)
+configure_file(Settings.ini ${PROJECT_BINARY_DIR}/Settings.ini)
+
 # 查找当前目录下的所有源文件
 # 并将名称保存到 DIR_SRCS 变量
 aux_source_directory(. DIR_SRCS)
