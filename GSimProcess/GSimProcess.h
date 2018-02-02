@@ -17,6 +17,7 @@
 #include "../GSource/GSource.h"
 #include "../GRand/GRand.h"
 #include "../GRand/GNoise.h"
+#include "../GEventsFile/GEventsFile.h"
 
 struct GEventComparator{
 	bool operator() (const GEvent * left, const GEvent * right) const{
@@ -30,7 +31,7 @@ class GSimProcess{
   	GNoise* pStatNoise = nullptr;
   	GNoise* pElecNoise = nullptr;
 	std::vector<GSpectra*> vecGSpec;
-	//GSpectra* pSpectrum;
+	std::vector<GEventsFile*> vecGEvtFile;
 	
   	std::vector<std::thread> vecThrSim_;
   	std::mutex mx_;
@@ -73,10 +74,13 @@ class GSimProcess{
   		if(vecGPtSource.size()>0) vecGPtSource.erase(vecGPtSource.begin(), vecGPtSource.end());
 		
   		for(unsigned int i=0; i<vecGSpec.size(); i++){
-  			//this->OutputSpectrum(i);
   			delete vecGSpec[i];	
   		}
   		if(vecGSpec.size()>0) vecGSpec.erase(vecGSpec.begin(), vecGSpec.end());
+  		for(unsigned int i=0; i<vecGEvtFile.size(); i++){
+  			delete vecGEvtFile[i];	
+  		}
+  		if(vecGEvtFile.size()>0) vecGEvtFile.erase(vecGEvtFile.begin(), vecGEvtFile.end());
   		//delete pSpectrum;
   		if(!pStatNoise) delete pStatNoise;
   		if(!pElecNoise) delete pElecNoise;
@@ -88,13 +92,15 @@ class GSimProcess{
   	void ThreadWaitTillFinish();
   	void ScheduleEvent (GEvent * newEvent, int nThread);
   	void OutputSpectrum(int nThread);
-  	void Add2Spec(const double fE, int nThread=0, const bool bNoise = false);
+  	void RecordEvent(const double fE, int nThread=0, const bool bNoise = false);
   	void AddNewSource(GPointSource* pPSource);
   	void AddNewObject(GCuboid* pGC);
   	void AddNewSpectrum(GSpectra* pSpec);
+  	void AddNewEventsFile(GEventsFile* pEventsFile);
   	void PumpDecays(double fTime, int nThread);
   	void ResetNoiseE(const double fNoiseE);
   	bool ObjectConstraintTest();
+  	int nRecordOption = 0;
 };
 
 #endif

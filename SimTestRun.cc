@@ -28,6 +28,7 @@ bool ProcessConfig(GSimProcess* pGammaSim){
     std::regex rCuboidObject ("^OBJ_CUBOID");
     std::regex rNoiseE ("^NOISE_E");
     std::regex rThread ("^THREAD_NUM");
+    std::regex rRecordOption ("^EVENT_RECORD_OPTION");
     std::smatch m;
     std::string strKeyWord;
     
@@ -107,6 +108,16 @@ bool ProcessConfig(GSimProcess* pGammaSim){
     			pGammaSim->ResetNoiseE(fNoiseE);
     		}
     	}
+    	if(std::regex_search (line,m,rRecordOption)){
+    		std::istringstream iss(line);
+    		if(!(iss >> strKeyWord)) bIfInputValid = false;
+    		int nRecordOpt;
+    		if(!(iss >> nRecordOpt)) bIfInputValid = false;
+    		if(nRecordOpt >= 0 && nRecordOpt<=2){
+    			std::cout<<"Events recording option: "<< nRecordOpt <<std::endl;
+    			pGammaSim->nRecordOption = nRecordOpt;
+    		}
+    	}
     	/*
     	if(std::regex_search (line,m,rThread)){
     		std::istringstream iss(line);
@@ -168,9 +179,11 @@ int main(){
   		for(int i=0; i<nNumOfThreads; i++) pGammaSim->ThreadStartRun(i);
 	  	//pGammaSim->ThreadStartRun(0);
 	  	//pGammaSim->ThreadStartRun(1);
-	  	for(int i=0; i<nNumOfThreads; i++) pGammaSim->AddNewSpectrum(new GSpectra(1000, 1));
-	  	//pGammaSim->AddNewSpectrum(new GSpectra(1000, 1));
-	  	//pGammaSim->AddNewSpectrum(new GSpectra(1000, 1));
+	  	std::string strTempFile = "EventsFile_";
+	  	for(int i=0; i<nNumOfThreads; i++){
+	  		pGammaSim->AddNewSpectrum(new GSpectra(1000, 1));
+	  		pGammaSim->AddNewEventsFile(new GEventsFile(strTempFile + std::to_string(i) + ".txt"));
+	  	}
 	  	pGammaSim->ThreadWaitTillFinish();
 		//Wait for all the processes to finish, then output spectra
 		for(int i=0; i<nNumOfThreads; i++) pGammaSim->OutputSpectrum(i);

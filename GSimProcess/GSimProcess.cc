@@ -118,6 +118,9 @@ void GSimProcess::AddNewSpectrum(GSpectra* pSpec){
 	pSpec->Clear();
 	vecGSpec.push_back(pSpec);
 }
+void GSimProcess::AddNewEventsFile(GEventsFile* pEventsFile){
+	vecGEvtFile.push_back(pEventsFile);
+}
 void GSimProcess::PumpDecays(double fTime, int nThread){
 	//double fActivity = 1;//1 uCi activity
   	double t=0.0;
@@ -163,15 +166,29 @@ void GSimProcess::PumpDecays(double fTime, int nThread){
 	}
 }
 
-void GSimProcess::Add2Spec(const double fE, int nThread, const bool bNoise){
+void GSimProcess::RecordEvent(const double fE, int nThread, const bool bNoise){
 	//fE unit: keV
 	//Declare a unique_lock object and lock the mutex object.
 	//Block the thread if the lock is owned by other threads.
     std::unique_lock<std::mutex> lock(mx_);
-    
-	if(nThread>=vecGSpec.size()) nThread = 0;
-	if(!bNoise) vecGSpec[nThread]->AddOneEvent(fE);
-	else vecGSpec[nThread]->AddOneEvent(fE + pStatNoise->fGaussianSampler( 2.35*sqrt(fE * 0.005) ) + pElecNoise->fGaussianSampler( 1.4 ));
+    if(nThread>=vecGSpec.size()) nThread = 0;
+	
+	double fERecord = fE;
+	if(bNoise) fERecord += pStatNoise->fGaussianSampler( 2.35*sqrt(fE * 0.005) ) + pElecNoise->fGaussianSampler( 1.4 );
+	//if(!bNoise) vecGSpec[nThread]->AddOneEvent(fE);
+	//else vecGSpec[nThread]->AddOneEvent(fE + pStatNoise->fGaussianSampler( 2.35*sqrt(fE * 0.005) ) + pElecNoise->fGaussianSampler( 1.4 ));
+	switch(nRecordOption){
+		//Only output to events file
+		case 1:
+			vecGEvtFile[nThread]->OutputToFile(fE, 1.0, 1.0, 1.0, 1.0);
+		//Output to both spectra and events file
+		case 2:
+			vecGEvtFile[nThread]->OutputToFile(fE, 1.0, 1.0, 1.0, 1.0);
+			vecGSpec[nThread]->AddOneEvent(fERecord);
+		//Only output to spectra
+		default:
+			vecGSpec[nThread]->AddOneEvent(fERecord);
+	}
 }
 
 void GSimProcess::ResetNoiseE(const double fNoiseE){
