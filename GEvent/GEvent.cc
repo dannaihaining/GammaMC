@@ -78,13 +78,13 @@ void GCompton::ProcessEvent(GSimProcess* pGProc, int nThread){
   		//pGProc->ScheduleEvent(new GEmission(time, x, y, z, fEs, bInDetector, true, pVector));
   		pGProc->ScheduleEvent(new GEmission(time, x, y, z, fEs, pVector), nThread);
   		//For now I assuemd all objects are detectors. I need to use a flag to mark some materials as non-detectors.
-  		if(bInDetector) pGProc->RecordEvent(1000*(E-fEs), nThread, true);
+  		if(bInDetector) pGProc->RecordEvent(1000*(E-fEs), x, y, z, time, nThread, true);
   	}
-  	else if(bInDetector) pGProc->RecordEvent(1000*E, nThread, true);
+  	else if(bInDetector) pGProc->RecordEvent(1000*E, x, y, z, time,  nThread, true);
 }
 
 void GPhotoElec::ProcessEvent(GSimProcess* pGProc, int nThread){
-	if(bInDetector) pGProc->RecordEvent(1000*E, nThread, true);
+	if(bInDetector) pGProc->RecordEvent(1000*E, x, y, z, time,  nThread, true);
 }
 
 void GPairProd::ProcessEvent(GSimProcess* pGProc, int nThread){

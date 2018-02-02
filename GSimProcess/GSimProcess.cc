@@ -166,7 +166,7 @@ void GSimProcess::PumpDecays(double fTime, int nThread){
 	}
 }
 
-void GSimProcess::RecordEvent(const double fE, int nThread, const bool bNoise){
+void GSimProcess::RecordEvent(const double fE, const double x, const double y, const double z, const double time, int nThread, const bool bNoise){
 	//fE unit: keV
 	//Declare a unique_lock object and lock the mutex object.
 	//Block the thread if the lock is owned by other threads.
@@ -175,19 +175,22 @@ void GSimProcess::RecordEvent(const double fE, int nThread, const bool bNoise){
 	
 	double fERecord = fE;
 	if(bNoise) fERecord += pStatNoise->fGaussianSampler( 2.35*sqrt(fE * 0.005) ) + pElecNoise->fGaussianSampler( 1.4 );
+	fERecord = std::max(fERecord, 0.0);
 	//if(!bNoise) vecGSpec[nThread]->AddOneEvent(fE);
 	//else vecGSpec[nThread]->AddOneEvent(fE + pStatNoise->fGaussianSampler( 2.35*sqrt(fE * 0.005) ) + pElecNoise->fGaussianSampler( 1.4 ));
 	switch(nRecordOption){
+		//Only output to spectra
+		case 0:
+			vecGSpec[nThread]->AddOneEvent(fERecord);
 		//Only output to events file
 		case 1:
-			vecGEvtFile[nThread]->OutputToFile(fE, 1.0, 1.0, 1.0, 1.0);
+			vecGEvtFile[nThread]->OutputToFile(fERecord, x, y, z, time);
 		//Output to both spectra and events file
 		case 2:
-			vecGEvtFile[nThread]->OutputToFile(fE, 1.0, 1.0, 1.0, 1.0);
+			vecGEvtFile[nThread]->OutputToFile(fERecord, x, y, z, time);
 			vecGSpec[nThread]->AddOneEvent(fERecord);
-		//Only output to spectra
 		default:
-			vecGSpec[nThread]->AddOneEvent(fERecord);
+			return;
 	}
 }
 

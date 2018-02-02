@@ -92,7 +92,7 @@ class GSimProcess{
   	void ThreadWaitTillFinish();
   	void ScheduleEvent (GEvent * newEvent, int nThread);
   	void OutputSpectrum(int nThread);
-  	void RecordEvent(const double fE, int nThread=0, const bool bNoise = false);
+  	void RecordEvent(const double E, const double x, const double y, const double z, const double time, int nThread=0, const bool bNoise = false);
   	void AddNewSource(GPointSource* pPSource);
   	void AddNewObject(GCuboid* pGC);
   	void AddNewSpectrum(GSpectra* pSpec);

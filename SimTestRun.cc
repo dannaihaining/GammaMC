@@ -177,8 +177,6 @@ int main(){
   	//Multi thread
   	if(pGammaSim->vecGCuboid.size()>0){
   		for(int i=0; i<nNumOfThreads; i++) pGammaSim->ThreadStartRun(i);
-	  	//pGammaSim->ThreadStartRun(0);
-	  	//pGammaSim->ThreadStartRun(1);
 	  	std::string strTempFile = "EventsFile_";
 	  	for(int i=0; i<nNumOfThreads; i++){
 	  		pGammaSim->AddNewSpectrum(new GSpectra(1000, 1));
@@ -187,8 +185,6 @@ int main(){
 	  	pGammaSim->ThreadWaitTillFinish();
 		//Wait for all the processes to finish, then output spectra
 		for(int i=0; i<nNumOfThreads; i++) pGammaSim->OutputSpectrum(i);
-  		//pGammaSim->OutputSpectrum(0);
-  		//pGammaSim->OutputSpectrum(1);
   	}
   	
   	//Some pointers will be released by the destructor of pGammaSim.
