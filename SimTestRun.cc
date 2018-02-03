@@ -176,12 +176,12 @@ int main(){
   	
   	//Multi thread
   	if(pGammaSim->vecGCuboid.size()>0){
-  		for(int i=0; i<nNumOfThreads; i++) pGammaSim->ThreadStartRun(i);
 	  	std::string strTempFile = "EventsFile_";
 	  	for(int i=0; i<nNumOfThreads; i++){
 	  		pGammaSim->AddNewSpectrum(new GSpectra(1000, 1));
 	  		pGammaSim->AddNewEventsFile(new GEventsFile(strTempFile + std::to_string(i) + ".txt"));
 	  	}
+  		for(int i=0; i<nNumOfThreads; i++) pGammaSim->ThreadStartRun(i);
 	  	pGammaSim->ThreadWaitTillFinish();
 		//Wait for all the processes to finish, then output spectra
 		for(int i=0; i<nNumOfThreads; i++) pGammaSim->OutputSpectrum(i);

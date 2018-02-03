@@ -4,6 +4,7 @@
 
 void GSimProcess::ThreadStartRun(int nThread){
 	vecThrSim_.push_back(std::thread(&GSimProcess::Run, this, nThread));
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
 }
 
 void GSimProcess::ThreadWaitTillFinish(){
@@ -12,6 +13,7 @@ void GSimProcess::ThreadWaitTillFinish(){
 
 void GSimProcess::Run(int nThread){
 	
+	if(nThread >= vec_EventQueue.size()) return;
 	///////////
 	//Progress bar
 	//int nMaxSize = eventQueue.size();
@@ -22,7 +24,7 @@ void GSimProcess::Run(int nThread){
   	double fProgress = 0.0;
   	int nCt = 0.0;
 	////////////////
-	
+		
 	/*
 	while (!eventQueue.empty()){
   		GEvent * nextEvent = eventQueue.top();
@@ -34,11 +36,19 @@ void GSimProcess::Run(int nThread){
    		nextEvent->ProcessEvent(this, nThread);
    		delete nextEvent;
    		
-   		///////////
+   		
+	
+   		
+   		
+		if(vec_EventQueue[nThread].size()==0) break;
+		
+		
+		//std::cout << "Thread: " << nThread << " Queue size: " << vec_EventQueue[nThread].size() 
+		//<< " Processed events: " << nProcessed <<std::endl;
+		///////////
 		//Progress bar
 		if(nThread>0) continue;
-		//if(eventQueue.size()==0) break;
-		if(vec_EventQueue[nThread].size()==0) break;
+		
 		nProcessed ++;
 		nCt ++;
 		//if(eventQueue.size()>nMaxSize) nMaxSize = eventQueue.size();
